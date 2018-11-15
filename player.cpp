@@ -1,9 +1,11 @@
 #include "player.h"
 
-player::player(int x, int y, int lv, float lx, float ly, int num, bool main)
+
+
+player::player(int lv, float lx, float ly, int num, bool main)
 {
-	StickyManOrigin.x = x;
-	StickyManOrigin.y = y;
+	StickyManOrigin.x = 400;
+	StickyManOrigin.y = 450;
 	SC.lenght = 80;
 	SC.X_RightHandJoint_length = 40;
 	SC.Y_RightHandJoint_length = 30;
@@ -26,14 +28,71 @@ player::player(int x, int y, int lv, float lx, float ly, int num, bool main)
     
     num_player = num;
     is_main = main;
+
+
+	raisearm.x = 0;
+	raisearm.y = 0;
+
 }
+
 
 player::~player()
 {
 	//cleanUp();
+
 }
 
-/* Drawing */
+void player::create()
+{
+	/*if (pixels == nullptr)
+	{
+		width = w;
+		height = h;
+		int size = width * height;
+		pixels = new char[size + 164];
+		for (int i = 0; i < width; i++)
+		{
+			for (int j = 0; j < height; j++)
+			{
+				pixels[(j + 1) * width + i] = '0';
+			}
+		}
+	}
+	else
+	{
+		cout << "The object has already been created! \n";
+	}*/
+	
+
+
+}
+/*
+void player::cleanUp()
+{
+	height = width = 0;
+	oriX = oriY = 0;
+	if (pixels != nullptr)
+	{
+		delete[] pixels;
+		pixels = nullptr;
+	}
+}
+
+char player::getPixel(int x, int y) const
+{
+	if (0 <= x && x <= width - 1 && 0 <= y && y <= height - 1)
+	{
+		int idx = (y + 1) * width + x;
+		return pixels[idx];
+	}
+	else
+	{
+		return '0';
+	}
+
+}
+
+*/
 void drawCircle(Coordinate origin, int rad, bool fill)
 {
 	const double PI = 3.1415927;
@@ -55,16 +114,52 @@ void drawCircle(Coordinate origin, int rad, bool fill)
 
 void player::draw()
 {
+	/*for (int i = 0; i < width; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			switch (player::getPixel(i, j))
+			{
+			case '0':
+				glColor3ub(0, 0, 0);
+				break;
+			case '1':
+				glColor3ub(0, 0, 255);
+				break;
+			case '2':
+				glColor3ub(255, 0, 0);
+				break;
+			case '3':
+				glColor3ub(255, 0, 255);
+				break;
+			case '4':
+				glColor3ub(0, 255, 0);
+				break;
+			case '5':
+				glColor3ub(0, 255, 255);
+				break;
+			case '6':
+				glColor3ub(255, 255, 0);
+				break;
+			case '7':
+				glColor3ub(255, 255, 255);
+				break;
+			}
+			glBegin(GL_POINTS);
+			glVertex2i(i, j);
+			glEnd();
+		}
+	}*/
 	int rad = 20;
 	
 	glLineWidth(15);
 	glColor3f(0.0, 0.0, 0);
 	glBegin(GL_LINES);
-    glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
-    glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
 
-    glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
-    glVertex2i(StickyManOrigin.x+SC.X_RightHandJoint_length, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length);
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+	glVertex2i(StickyManOrigin.x+SC.X_RightHandJoint_length, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length);
 
 	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
 	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length);
@@ -92,7 +187,6 @@ void player::draw()
 	
 }
 
-/* Moving */
 void player::moveLeft()
 {
 	StickyManOrigin.x-= 10;
@@ -157,7 +251,6 @@ void player::punch(int &punchPos)
 	}
 
 }
-
 /**
 void player::stand()
 {
@@ -186,6 +279,11 @@ void player::load(string fName)
 	}
 
 }*/
+
+// Get id die
+bool player::getIfDie(){
+    return is_die;
+}
 
 // Decide if hit by someone
 void player::ifHit(int key, int &type_hit)
@@ -228,8 +326,8 @@ const int player::SIDEMAG;
 // Draw the life bar
 void player::drawLife()
 {
-    int hp_percent = 100 * lifeValue / life_tot;        // the percent of HP health remaining
-    
+    int hp_percent = (100*lifeValue) / life_tot ;        // the percent of HP health remaining
+	//cout << life_tot << endl;
     double long_side = lifeValue * SIDEMAG;             // Long Side of Life Bar
     double short_side = 30;
     
@@ -261,11 +359,12 @@ void player::drawLife()
         rbar = 204;
         gbar = 0;
         bbar = 0;
-    } else {
-        rbar = 0;
-        gbar = 0;
-        bbar = 0;
     }
+	else if (hp_percent == 0) {
+		rbar = 0;
+		gbar = 0;
+		bbar = 0;
+	}
     
     glColor3ub(rbar, gbar, bbar);                            // Yellow as default
     glBegin(GL_QUADS);                                  // Rectangular Life Bar
@@ -289,11 +388,11 @@ void player::drawLife()
     
     // HP module
     
-    string life_digit = to_string(lifeValue);           // display HP value
+    string life_digit = to_string(hp_percent);           // display HP value
     const char *life_cstr = life_digit.c_str();          // the life HP of player
     
     glColor3ub(32,32,32);
-    glRasterPos2i(lifeX, lifeY - 5);
+    glRasterPos2i(lifeX, lifeY-5);
     YsGlDrawFontBitmap12x16("Health:");
     glRasterPos2i(lifeX+1, lifeY - 5);
     YsGlDrawFontBitmap12x16("Health:");
@@ -334,12 +433,236 @@ void player::checkIfDie(bool &terminate)
     }
 }
 
-// Get id die
-bool player::getIfDie(){
-    return is_die;
+
+
+
+
+
+void player::knife_position()
+{
+	/*for (int i = 0; i < width; i++)
+	{
+	for (int j = 0; j < height; j++)
+	{
+	switch (player::getPixel(i, j))
+	{
+	case '0':
+	glColor3ub(0, 0, 0);
+	break;
+	case '1':
+	glColor3ub(0, 0, 255);
+	break;
+	case '2':
+	glColor3ub(255, 0, 0);
+	break;
+	case '3':
+	glColor3ub(255, 0, 255);
+	break;
+	case '4':
+	glColor3ub(0, 255, 0);
+	break;
+	case '5':
+	glColor3ub(0, 255, 255);
+	break;
+	case '6':
+	glColor3ub(255, 255, 0);
+	break;
+	case '7':
+	glColor3ub(255, 255, 255);
+	break;
+	}
+	glBegin(GL_POINTS);
+	glVertex2i(i, j);
+	glEnd();
+	}
+	}*/
+	int rad = 20;
+
+	glLineWidth(15);
+	glColor3f(0.0, 0.0, 0);
+	glBegin(GL_LINES);
+
+	//body
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+
+	//right arm setup
+	double ratio = 0.4;   // need to check integer input
+	knife.x_righthand_joint = StickyManOrigin.x + SC.X_RightHandJoint_length*ratio-1; // store the number in struct
+	knife.y_righthand_joint = StickyManOrigin.y + rad + SC.Y_RightHandJoint_length*ratio+4;
+	//right upper arm
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+	glVertex2i(knife.x_righthand_joint, knife.y_righthand_joint);
+
+	//right lower arm
+	knife.x_righthand = knife.x_righthand_joint + SC.X_RightHandJoint_length*(1 - ratio - 0.2);
+	knife.y_righthand = knife.y_righthand_joint - SC.Y_RightHandJoint_length*(ratio - 0.2);
+
+	glVertex2i(knife.x_righthand_joint, knife.y_righthand_joint);
+	glVertex2i(knife.x_righthand, knife.y_righthand);
+
+	//left upper arm
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length);
+
+	//left lower arm
+	knife.x_lefthand = StickyManOrigin.x - SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2 - 8;
+	knife.y_lefthand = StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2;
+	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length);
+	glVertex2i(knife.x_lefthand, knife.y_lefthand);
+
+	//right leg
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+	glVertex2i(StickyManOrigin.x + SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
+
+	//left leg
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+	glVertex2i(StickyManOrigin.x - SC.X_LeftLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegLeft);
+
+	glEnd();
+
+	glColor3f(1, 0, 0);
+	drawCircle(StickyManOrigin, rad, true);
+
+	//Draw knife
+	glLineWidth(11);
+	glColor3ub(34, 0, 204);
+	glBegin(GL_LINES);
+
+
+	knife.x_knife_bottom = knife.x_righthand - 8;
+	knife.y_knife_bottom = knife.y_righthand + 4;
+	knife.x_knife_tip = knife.x_righthand + 18;     // can use this coordinate to determine knife damange
+	knife.y_knife_tip = knife.y_righthand - 9;
+	knife.x_knife_shield_l = knife.x_righthand - 4;
+	knife.y_knife_shield_l = knife.y_righthand - 5;
+	knife.x_knife_shield_r = knife.x_righthand + 4;
+	knife.y_knife_shield_r = knife.y_righthand + 5;
+
+	glVertex2i(knife.x_knife_bottom, knife.y_knife_bottom);
+	glVertex2i(knife.x_knife_tip, knife.y_knife_tip);
+
+	glVertex2i(knife.x_knife_shield_l, knife.y_knife_shield_l);
+	glVertex2i(knife.x_knife_shield_r, knife.y_knife_shield_r);
+	glEnd();
+	/*if (SC.X_RightHandJoint_length!=40)
+	{
+	SC.X_RightHandJoint_length = 40;
+	SC.Y_RightHandJoint_length = 30;
+	}
+	*/
+
 }
 
-/* Attack and Die*/
-Coordinate player::getOrigin(){
-    return StickyManOrigin;
+void player::laser_position() {
+	int rad = 20;
+
+	glLineWidth(15);
+	glColor3f(0.0, 0.0, 0);
+	glBegin(GL_LINES);
+
+	//body
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+
+	//right arm setup
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + 10);
+	glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y );
+
+	//left upper arm
+	int adjust = 5;   // based on the default stickerman figure
+
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
+
+	//left lower arm
+	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);  
+	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2 - 5, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2 + adjust);
+
+	//right leg setup
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+	glVertex2i(StickyManOrigin.x + SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
+
+	//left leg
+	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+	glVertex2i(StickyManOrigin.x - SC.X_LeftLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegLeft);
+
+	glEnd();
+
+	glColor3f(1, 0, 0);
+	drawCircle(StickyManOrigin, rad, true);
+
+	//draw gun
+	glShadeModel(GL_SMOOTH);
+	glLineWidth(16);
+	glColor3ub(0, 0, 255);
+	glBegin(GL_LINES);
+
+	int gunwidth = 20;
+	int right_hand_x = StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x;
+	int right_hand_y = StickyManOrigin.y + rad + 10 +raisearm.y;
+
+	   // lower end of gun
+	glVertex2i(right_hand_x, right_hand_y + 7);
+	glColor3ub(0, 204, 255);
+	glVertex2i(right_hand_x, right_hand_y - 7);
+
+	  // gun tube
+	guntip.y = right_hand_y - 7;
+	guntip.x = right_hand_x + gunwidth;
+	glColor3ub(0, 204, 0);
+	glVertex2i(right_hand_x, guntip.y);
+	glColor3ub(204, 204, 0);
+	glVertex2i(guntip.x, guntip.y);
+	glEnd();
+
+	//trigger
+	glLineWidth(13);
+	glColor3ub(152, 153, 255);
+	glBegin(GL_LINES);
+	int length = 6;
+	glVertex2i(right_hand_x - length, right_hand_y - 8 - length - raisearm.y);
+	glVertex2i(right_hand_x, right_hand_y - 8);
+	glEnd();
+
 }
+
+void player::bullet_init() {
+	if (!bullet_visible) {
+		laser_traj.x = guntip.x;
+		laser_traj.y = guntip.y;
+		bullet_visible = true;
+	}
+}
+
+
+void player::draw_laser() {
+	if (bullet_visible) {
+		glLineWidth(40);
+		glColor3ub(255, 0, 255);
+		glBegin(GL_LINES);
+		glVertex2i(laser_traj.x-20, laser_traj.y);
+		glVertex2i(laser_traj.x, laser_traj.y);
+		glEnd();
+	}
+	
+}
+
+void player::laser_move() {
+	if (bullet_visible) {
+		laser_traj.x += 15;   // the speed of laser
+		cout << "move once" << endl;
+		if ((laser_traj.x > 800) || (laser_traj.x < 0) || (bullethit == true))
+			bullet_visible = false;
+	}
+	
+}
+
+void player::raise_arm() {
+	raisearm.x += -1;
+	raisearm.y += -1;
+	if (raisearm.x < -6) {
+		raisearm.x = raisearm.y = 0;
+	}
+}
+// stick, knife, layser
