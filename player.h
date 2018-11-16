@@ -4,7 +4,6 @@
 #include <fstream>
 #include <stdlib.h>
 #include <math.h>
-#include <cstdlib>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
 
@@ -32,7 +31,6 @@ struct StickyManCoordinates
 	int Y_LegLeft = 50;
 
 };
-
 class player
 {
 private:
@@ -54,10 +52,12 @@ private:
     
     bool is_die = false;            // Whether the player die
 public:
-    player(int x, int y, int lv, float lx, float ly, int num, bool main);
+    player(int lv, float lx, float ly, int num, bool main);
 	~player();
-    
 	void draw();
+	void create();
+	//void cleanUp();
+	//char getPixel(int x, int y) const;
 	void moveLeft();
 	void moveRight(); // change the origin coordinates, store the new leg coordinates/new config
 
@@ -65,17 +65,20 @@ public:
 	void kick(int &kickpos); // store the new coordinates for the leg/new config
 	//void stand(); // store the new coords for stand config
 	//void load(string fName); // load the config
-
+    
+    bool getIfDie();                            // Get if die
+    void ifHit(int key, int &type_hit);         // Deice if hit
+    
     /* Life Methods */
     void drawLife();                            // Draw the life bar
     void handleLife(int &type_hit);             // Check the hit points left in time
     void checkIfDie(bool &terminate);           // Check if the player dies
-    
-    /* Attack and Die*/
-    Coordinate getOrigin();                     // Get origin of the player
-    bool getIfDie();                            // Get if die
-    void ifHit(int key, int &type_hit);         // Deice if hit
-    
+	Coordinate get_origin() { return StickyManOrigin; }
+	void Jump(float dt, float &v, bool &InAir);
+	void showText();
+
 };
+
+void createBlood(Coordinate origin,int &BloodPos);
 
 
