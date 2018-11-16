@@ -36,7 +36,7 @@ int main()
                 break;
             // Key for player
             case(FSKEY_A):
-                p1.moveLeft();
+				p1.moveLeft();
                 break;
             case(FSKEY_D):
                 p1.moveRight();
@@ -47,6 +47,12 @@ int main()
             case(FSKEY_X):
                 p1.kick(kickpos_1);
                 break;
+			case(FSKEY_C):
+				p1.bullet_init();
+				p1.raise_arm();
+				cout << "ok!" << endl;
+				break;
+
             // Key for enemy
             case(FSKEY_LEFT):
                 e1.moveLeft();
@@ -81,6 +87,11 @@ int main()
         {
             e1.kick(kickpos_2);
         }
+
+		if (p1.raisearm.x != 0) {
+			p1.raise_arm();
+		}
+
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
@@ -96,7 +107,12 @@ int main()
         
         if(!p1.getIfDie()){
             //            p1.stand();
-            p1.draw();
+            //p1.draw();
+
+
+			p1.laser_position();        // testing: use knife position
+			p1.draw_laser();
+			p1.laser_move();
             
             /* Life Part */
             p1.drawLife();
