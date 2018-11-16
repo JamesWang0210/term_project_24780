@@ -10,7 +10,7 @@ int main()
     player p1(100, 50.0, 50.0, 1, true);
     int punchPos=0;
     int kickpos = 0;
-
+	int state = 1;
 
 
     FsOpenWindow(16, 16, 800, 600, 1);
@@ -41,8 +41,19 @@ int main()
 			case(FSKEY_C):
 				p1.bullet_init();
 				p1.raise_arm();
-				cout << "ok!" << endl;
 				break;
+
+			case(FSKEY_1):
+				state = 1;
+				break;
+
+			case(FSKEY_2):
+				state = 2;
+				break;
+			case(FSKEY_3):
+				state = 3;
+				break;
+
         }
         if (punchPos != 0)
         {
@@ -53,7 +64,7 @@ int main()
             p1.kick(kickpos);
         }
 
-		if (p1.raisearm.x != 0) {
+		if (p1.raisearm_x() != 0) {
 			p1.raise_arm();
 		}
 
@@ -62,9 +73,19 @@ int main()
         
         if(!p1.getIfDie()){
             //            p1.stand();
-            p1.laser_position();        // testing: use knife position
-			p1.draw_laser();
-			p1.laser_move();
+
+
+
+			if (state == 1)
+				p1.draw();
+			else if (state == 2) {
+				p1.laser_position();        // use knife position
+				p1.draw_laser();
+				p1.laser_move();
+			}
+			else if (state == 3) {
+				p1.knife_position();
+			}
             
             /* Life Part */
             p1.drawLife();

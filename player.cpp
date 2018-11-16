@@ -666,3 +666,16 @@ void player::raise_arm() {
 	}
 }
 // stick, knife, layser
+
+bool player::bulletvisible() {
+	return bullet_visible;
+
+}
+
+bool player::bullet_hit() {
+	return bullethit;
+}
+
+int player::raisearm_x() {
+	return raisearm.x;
+}

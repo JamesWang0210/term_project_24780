@@ -59,6 +59,15 @@ private:
 	Coordinate StickyManOrigin;
 	StickyManCoordinates SC;
 	knifeCoordinates knife;
+	Coordinate laser_traj;
+	bool bullet_visible = false;
+	bool bullethit = false; // determine whether hit by a character
+	Coordinate guntip;
+	Coordinate raisearm;
+
+
+
+
 
 
     /* Life Variables */
@@ -105,12 +114,9 @@ public:
 
 
 
-	Coordinate laser_traj;
-	bool bullet_visible = false;
-	bool bullethit= false; // determine whether hit by a character
-	Coordinate guntip;
-	Coordinate raisearm;
-
+	bool bulletvisible();
+	bool bullet_hit();
+	int raisearm_x();
 
 	void raise_arm();
 	void knife_position();                      // ADD:draw the knife position
