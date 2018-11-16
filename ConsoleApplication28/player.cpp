@@ -571,7 +571,7 @@ void player::knife_position()
 
 	glEnd();
 
-	glColor3f(1, 0, 0);
+	glColor3f(0, 0, 0);
 	drawCircle(StickyManOrigin, rad, true);
 
 	//Draw knife
@@ -639,7 +639,7 @@ void player::laser_position() {
 
 	glEnd();
 
-	glColor3f(1, 0, 0);
+	glColor3f(0, 0, 0);
 	drawCircle(StickyManOrigin, rad, true);
 
 	//draw gun
@@ -714,4 +714,16 @@ void player::raise_arm() {
 	if (raisearm.x < -6) {
 		raisearm.x = raisearm.y = 0;
 	}
+}
+bool player::bulletvisible() {
+	return bullet_visible;
+
+}
+
+bool player::bullet_hit() {
+	return bullethit;
+}
+
+int player::raisearm_x() {
+	return raisearm.x;
 }

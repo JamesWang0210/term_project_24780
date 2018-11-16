@@ -69,6 +69,15 @@ private:
     bool is_main;                   // Whether it is the main player
     
     bool is_die = false;            // Whether the player die
+
+
+	Coordinate laser_traj;
+	bool bullet_visible = false;
+	bool bullethit = false; // determine whether hit by a character
+	Coordinate guntip;
+	Coordinate raisearm;
+
+
 public:
     player(int lv, float lx, float ly, int num, bool main);
 	~player();
@@ -95,12 +104,6 @@ public:
 	void Jump(float dt, float &v, bool &InAir);
 	void showText();
 
-	Coordinate laser_traj;
-	bool bullet_visible = false;
-	bool bullethit = false; // determine whether hit by a character
-	Coordinate guntip;
-	Coordinate raisearm;
-
 
 	void raise_arm();
 	void knife_position();                      // ADD:draw the knife position
@@ -108,6 +111,9 @@ public:
 	void draw_laser();
 	void laser_move();
 	void bullet_init();
+	bool bulletvisible();       // return bullet visible status
+	bool bullet_hit();          // return whether bullet hit
+	int raisearm_x();           // arm position raised
 
 
 };

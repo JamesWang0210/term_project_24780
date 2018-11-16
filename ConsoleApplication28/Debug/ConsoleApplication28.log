@@ -80,5 +80,6 @@ c:\users\katiii\source\repos\consoleapplication28\consoleapplication28\player.cp
 c:\users\katiii\source\repos\consoleapplication28\consoleapplication28\player.cpp(674): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
 c:\users\katiii\source\repos\consoleapplication28\consoleapplication28\player.cpp(694): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
 c:\users\katiii\source\repos\consoleapplication28\consoleapplication28\player.cpp(695): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+c:\users\katiii\source\repos\consoleapplication28\consoleapplication28\player.cpp(728): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
   Generating Code...
   ConsoleApplication28.vcxproj -> C:\Users\katiii\source\repos\ConsoleApplication28\Debug\ConsoleApplication28.exe
