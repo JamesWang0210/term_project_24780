@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
+#include <time.h>
 
 using namespace std;
 
@@ -54,9 +55,7 @@ struct knifeCoordinates {
 
 class player
 {
-private:
-	//int oriX, oriY, height, width;
-	//char *pixels;
+protected:
 	Coordinate StickyManOrigin;
 	StickyManCoordinates SC;
 	knifeCoordinates knife;
@@ -84,10 +83,6 @@ public:
 
 	void punch(int &punchPos); // store the new coordinates for the arm/new config
 	void kick(int &kickpos); // store the new coordinates for the leg/new config
-	//void stand(); // store the new coords for stand config
-	//void load(string fName); // load the config
-	void punchLeft(int &punchPos);
-	void kickLeft(int &kickPos);
     /* Life Methods */
     void drawLife();                            // Draw the life bar
     void handleLife(int &type_hit);             // Check the hit points left in time

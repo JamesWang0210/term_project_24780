@@ -2,14 +2,17 @@
 
 int main()
 {
+	srand(time(NULL));
     bool terminate = false;
     int key;
-    
+	bool left = true, right = true;
     int type_hit = -1;
+	int enemy_type_hit = -1;
     
     player p1(400, 450, 100, 50.0, 50.0, 1, true);
     int punchPos_1 = 0;
     int kickpos_1 = 0;
+	int kickpos_3 = 0;
     
     player e1(600, 450, 50, 550.0, 50.0, 2, false);
     int punchPos_2 = 0;
@@ -52,22 +55,15 @@ int main()
 				p1.raise_arm();
 				cout << "ok!" << endl;
 				break;
-
-            // Key for enemy
-            case(FSKEY_LEFT):
-                e1.moveLeft();
-                break;
-            case(FSKEY_RIGHT):
-                e1.moveRight();
-                break;
-            case(FSKEY_N):
-                e1.punch(punchPos_2);
-                break;
-            case(FSKEY_M):
-                e1.kick(kickpos_2);
-                break;
         }
-        
+		if ((e1.getOrigin().x - p1.getOrigin().x) > 100)
+		{
+			e1.moveLeft();
+		}
+		if ((e1.getOrigin().x - p1.getOrigin().x) < -100)
+		{
+			e1.moveRight();
+		}
         if (punchPos_1 != 0)
         {
             p1.punch(punchPos_1);
@@ -96,11 +92,20 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         if (abs(p1.getOrigin().x - e1.getOrigin().x) <= 100){
-            p1.ifHit(key, type_hit);
-            p1.handleLife(type_hit);
+            p1.ifHit(key, enemy_type_hit);
+            p1.handleLife(enemy_type_hit);
             p1.checkIfDie(terminate);
-            
-            e1.ifHit(key, type_hit);
+			int random = rand() % 1000 + 1;
+			if (random <= 300)
+			{
+				enemy_type_hit = 0;
+				e1.punch(punchPos_2);
+			}
+			else
+			{
+				enemy_type_hit = 1;
+				e1.kick(kickpos_2);
+			}
             e1.handleLife(type_hit);
             e1.checkIfDie(terminate);
         }

@@ -162,36 +162,24 @@ void player::punch(int &punchPos)
 
 }
 
-void player::kickLeft(int &kickpos)
-{
-	SC.X_LeftLeg = 30 - kickpos;
-	SC.Y_LegLeft = 50 + kickpos;
-	kickpos += 5;
-	if (kickpos == 50)
-	{
-		kickpos = 0;
-		SC.X_LeftLeg = 30;
-		SC.Y_LegLeft = 50;
-	}
-}
 
-void player::punchLeft(int &punchPos)
-{
-	SC.X_LeftHandJoint_length = 40 + punchPos;
-	SC.Y_LeftHandJoint_length = 30 - punchPos;
-	SC.X_RightHandJoint_length = 20 - punchPos;
-	SC.Y_RightHandJoint_length = 15 + punchPos;
-	punchPos += 3;
-	if (punchPos == 30)
-	{
-		punchPos = 0;
-		SC.X_RightHandJoint_length = 40;
-		SC.Y_RightHandJoint_length = 30;
-		SC.X_LeftHandJoint_length2 = 20;
-		SC.Y_LeftHandJoint_length2 = 15;
-	}
-
-}
+//void player::punchLeft(int &punchPos)
+//{
+//	SC.X_LeftHandJoint_length = 40 + punchPos;
+//	SC.Y_LeftHandJoint_length = 30 - punchPos;
+//	SC.X_RightHandJoint_length = 20 - punchPos;
+//	SC.Y_RightHandJoint_length = 15 + punchPos;
+//	punchPos += 3;
+//	if (punchPos == 30)
+//	{
+//		punchPos = 0;
+//		SC.X_RightHandJoint_length = 40;
+//		SC.Y_RightHandJoint_length = 30;
+//		SC.X_LeftHandJoint_length2 = 20;
+//		SC.Y_LeftHandJoint_length2 = 15;
+//	}
+//
+//}
 // Decide if hit by someone
 void player::ifHit(int key, int &type_hit)
 {
@@ -213,15 +201,16 @@ void player::ifHit(int key, int &type_hit)
     
     // Enemy 1
     if (num_player == 1){
-        switch (key)
-        {
-            case(FSKEY_N):
-                type_hit = 0;
-                break;
-            case(FSKEY_M):
-                type_hit = 1;
-                break;
-        }
+
+        //switch (key)
+        //{
+        //    case(FSKEY_N):
+        //        type_hit = 0;
+        //        break;
+        //    case(FSKEY_M):
+        //        type_hit = 1;
+        //        break;
+        //}
     }
 }
 
@@ -334,7 +323,8 @@ void player::checkIfDie(bool &terminate)
         if (is_main)
             terminate = true;
         is_die = true;
-    } else {
+    } 
+	else {
         is_die = false;
     }
 }
