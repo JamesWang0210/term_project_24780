@@ -6,6 +6,8 @@
 #include <math.h>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
+#include "yssimplesound.h"
+
 
 using namespace std;
 
@@ -80,18 +82,12 @@ private:
 
 public:
     player(int lv, float lx, float ly, int num, bool main);
-	~player();
-	void draw();
-	void create();
-	//void cleanUp();
-	//char getPixel(int x, int y) const;
+	void draw(bool downPressed,bool InAir);
 	void moveLeft();
 	void moveRight(); // change the origin coordinates, store the new leg coordinates/new config
 
 	void punch(int &punchPos); // store the new coordinates for the arm/new config
 	void kick(int &kickpos); // store the new coordinates for the leg/new config
-	//void stand(); // store the new coords for stand config
-	//void load(string fName); // load the config
     
     bool getIfDie();                            // Get if die
     void ifHit(int key, int &type_hit);         // Deice if hit
@@ -106,8 +102,8 @@ public:
 
 
 	void raise_arm();
-	void knife_position();                      // ADD:draw the knife position
-	void laser_position();                      // ADD:draw the laser position
+	void knife_position(bool downPressed, bool InAir);                      // ADD:draw the knife position
+	void laser_position(bool downPressed, bool InAir);                      // ADD:draw the laser position
 	void draw_laser();
 	void laser_move();
 	void bullet_init();
@@ -119,5 +115,4 @@ public:
 };
 
 void createBlood(Coordinate origin,int &BloodPos);
-
 

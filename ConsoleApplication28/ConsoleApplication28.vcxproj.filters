@@ -27,6 +27,9 @@
     <ClInclude Include="fssimplewindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="yssimplesound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleApplication28.cpp">
@@ -39,6 +42,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="fssimplewindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="yssimplesound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="yssimplesound_dsound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
