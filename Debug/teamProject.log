@@ -1,0 +1,47 @@
+﻿生成启动时间为 2018/11/25 14:25:09。
+     1>项目“C:\Users\Haolin\Documents\Visual Studio 2013\Projects\teamProject\teamProject\teamProject.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt player.cpp player_main.cpp
+         player.cpp
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(5): warning C4244: “=”: 从“int”转换到“float”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(6): warning C4244: “=”: 从“int”转换到“float”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(65): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(66): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(68): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(69): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(71): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(72): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(74): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(75): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(77): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(78): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(80): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(81): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(83): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(84): warning C4244: “参数”: 从“float”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(321): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(322): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(323): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(324): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(332): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(333): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(334): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(335): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(344): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(346): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(350): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+     1>c:\users\haolin\documents\visual studio 2013\projects\teamproject\teamproject\player.cpp(352): warning C4244: “参数”: 从“double”转换到“GLint”，可能丢失数据
+         正在生成代码...
+         正在跳过...(未检测到相关更改)
+         player_main.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Haolin\Documents\Visual Studio 2013\Projects\teamProject\teamProject\Debug\teamProject.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Haolin\Documents\Visual Studio 2013\Projects\teamProject\teamProject\Debug\teamProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Haolin\Documents\Visual Studio 2013\Projects\teamProject\teamProject\Debug\teamProject.lib" /MACHINE:X86 Debug\fssimplewindow.obj
+         Debug\player.obj
+         Debug\player_main.obj
+         Debug\ysglfontdata.obj
+         teamProject.vcxproj -> C:\Users\Haolin\Documents\Visual Studio 2013\Projects\teamProject\teamProject\Debug\teamProject.exe
+     1>已完成生成项目“C:\Users\Haolin\Documents\Visual Studio 2013\Projects\teamProject\teamProject\teamProject.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:02.26
