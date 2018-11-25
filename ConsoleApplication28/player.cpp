@@ -28,6 +28,14 @@ player::player(int lv, float lx, float ly, int num, bool main)
     
     num_player = num;
     is_main = main;
+
+	for (int i = 0; i < 6; i++) {
+		bullets[i].x = guntip.x;
+		bullets[i].y = guntip.y;
+		bullets[i].isvisible = false;
+	}
+
+
 }
 
 
@@ -684,35 +692,63 @@ void player::laser_position(bool downPressed, bool InAir) {
 
 }
 
-void player::bullet_init() {
-	if (!bullet_visible) {
-		laser_traj.x = guntip.x;
-		laser_traj.y = guntip.y;
-		bullet_visible = true;
+void player::draw_lasers() {
+	// loop through the vector
+	for (int i = 0; i < 6; i++)
+	{
+		if (bullets[i].isvisible == true) {
+			cout << bullets[i].x << endl;
+			glLineWidth(40);
+			glColor3ub(255, 0, 255);
+			glBegin(GL_LINES);
+			glVertex2i(bullets[i].x - 20, bullets[i].y);
+			glVertex2i(bullets[i].x, bullets[i].y);
+			glEnd();
+		}
 	}
+
 }
 
-
-void player::draw_laser() {
-	if (bullet_visible) {
-		glLineWidth(40);
-		glColor3ub(255, 0, 255);
-		glBegin(GL_LINES);
-		glVertex2i(laser_traj.x - 20, laser_traj.y);
-		glVertex2i(laser_traj.x, laser_traj.y);
-		glEnd();
+void player::process_lasers() {
+	for (int i = 0; i < 6; i++)
+	{
+		//cout << "move once" << endl;
+		if ((bullets[i].x > 800) || (bullets[i].x < 0) || (bullets[i].bullethit == true)) {
+			bullets[i].isvisible = false;
+		}
 	}
 
 }
 
 void player::laser_move() {
-	if (bullet_visible) {
-		laser_traj.x += 15;   // the speed of laser
-		cout << "move once" << endl;
-		if ((laser_traj.x > 800) || (laser_traj.x < 0) || (bullethit == true))
-			bullet_visible = false;
+	for (int i = 0; i < 6; i++) {
+		if (bullets[i].isvisible == true) {
+			bullets[i].x += 15;
+		}
 	}
+}
 
+int player::bullets_on() {
+	int num = 0;
+	for (int i = 0; i < 6; i++) {
+		if (bullets[i].isvisible == true) {
+			num += 1;
+		}
+	}
+	return num;
+}
+
+void player::start_a_bullet() {
+	for (int i = 0; i < 6; i++) {
+		//&& bullets[i].x == guntip.x && bullets[i].y == guntip.y
+		if (bullets[i].isvisible == false) {
+			bullets[i].isvisible = true;
+			bullets[i].x = guntip.x - raisearm.x;
+			bullets[i].y = guntip.y - raisearm.y;
+			cout << "One bullet on" << endl;
+			break;
+		}
+	}
 }
 
 void player::raise_arm() {
@@ -722,8 +758,11 @@ void player::raise_arm() {
 		raisearm.x = raisearm.y = 0;
 	}
 }
-bool player::bulletvisible() {
-	return bullet_visible;
+
+void player::draw_reload() {
+	if (bullets_on() == 6) {
+		//draw reload figure
+	}
 
 }
 

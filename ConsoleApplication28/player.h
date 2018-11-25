@@ -52,6 +52,15 @@ struct knifeCoordinates {
 	int y_righthand;
 };
 
+struct lasers {
+	bool isvisible;
+	bool bullethit = false; // determine whether hit by a character
+	float x;
+	float y;
+};
+
+
+
 class player
 {
 private:
@@ -79,6 +88,13 @@ private:
 	Coordinate guntip;
 	Coordinate raisearm;
 
+	lasers b1;
+	lasers b2;
+	lasers b3;
+	lasers b4;
+	lasers b5;
+	lasers b6;
+	lasers bullets[6] = { b1,b2,b3,b4,b5,b6 };             // an array of laser data
 
 public:
     player(int lv, float lx, float ly, int num, bool main);
@@ -101,16 +117,28 @@ public:
 	void showText();
 
 
-	void raise_arm();
+	//void raise_arm();
+
+	//void draw_laser();
+	//void laser_move();
+	//void bullet_init();
+	//bool bulletvisible();       // return bullet visible status
+	//bool bullet_hit();          // return whether bullet hit
+	//int raisearm_x();           // arm position raised
+
 	void knife_position(bool downPressed, bool InAir);                      // ADD:draw the knife position
 	void laser_position(bool downPressed, bool InAir);                      // ADD:draw the laser position
-	void draw_laser();
+
+	void draw_lasers();
+	void process_lasers();
 	void laser_move();
-	void bullet_init();
-	bool bulletvisible();       // return bullet visible status
+	void start_a_bullet();         // 
+	//bool bulletvisible();       // return bullet visible status
 	bool bullet_hit();          // return whether bullet hit
 	int raisearm_x();           // arm position raised
-
+	int bullets_on();           // the number of bullets that are on screen
+	void draw_reload();
+	void raise_arm();
 
 };
 
