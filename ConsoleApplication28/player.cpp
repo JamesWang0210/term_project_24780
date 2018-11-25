@@ -1,18 +1,18 @@
 #include "player.h"
 
-
-
-player::player(int lv, float lx, float ly, int num, bool main)
+player::player(int x, int y, int lv, float lx, float ly, int num, bool main)
 {
-	StickyManOrigin.x = 400;
-	StickyManOrigin.y = 450;
+	StickyManOrigin.x = x;
+	StickyManOrigin.y = y;
 	SC.lenght = 80;
-	SC.X_RightHandJoint_length = 40;
-	SC.Y_RightHandJoint_length = 30;
+	SC.X_RightHandJoint_length = 20;
+	SC.Y_RightHandJoint_length = 15;
 	SC.X_LeftHandJoint_length = 20;
 	SC.Y_LeftHandJoint_length = 15;
-	SC.X_LeftHandJoint_length2=20;
-	SC.Y_LeftHandJoint_length2=15;
+	SC.X_LeftHandJoint_length2= 20;
+	SC.Y_LeftHandJoint_length2= 15;
+	SC.X_RightHandJoint_length2 = 20;
+	SC.Y_RightHandJoint_length2 = 15;
 	SC.X_LeftLeg = 30;
 	SC.X_RightLeg = 30;
 	SC.Y_LegRight = 50;
@@ -28,6 +28,8 @@ player::player(int lv, float lx, float ly, int num, bool main)
     
     num_player = num;
     is_main = main;
+
+	state = 1;
 }
 
 
@@ -50,7 +52,7 @@ void drawCircle(Coordinate origin, int rad, bool fill)
 	glEnd();
 }
 
-void player::draw(bool downPressed, bool InAir)
+void player::draw()
 {	
 	int rad = 20;
 	if (downPressed == FALSE)
@@ -72,6 +74,10 @@ void player::draw(bool downPressed, bool InAir)
 
 		glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length);
 		glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length - SC.X_LeftHandJoint_length2, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2);
+
+		//add;
+		glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length);
+		glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length + SC.Y_RightHandJoint_length2);
 
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
 		glVertex2i(StickyManOrigin.x + SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
@@ -102,6 +108,9 @@ void player::draw(bool downPressed, bool InAir)
 
 		glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length);
 		glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length - SC.X_LeftHandJoint_length2, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2);
+
+		glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length);
+		glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length + SC.Y_RightHandJoint_length2);
 
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
 		glVertex2i(StickyManOrigin.x + 15, StickyManOrigin.y + rad + SC.lenght + 20);
@@ -156,22 +165,48 @@ void player::moveRight()
 
 }
 
-void player::kick(int &kickpos)
+void player::kick()
 {
-	SC.X_RightLeg = 30 + kickpos;
-	SC.Y_LegRight = 50 - kickpos;
-	kickpos += 5;
-	if (kickpos == 50)
+	//SC.X_RightLeg = 30 + kickpos;
+	//SC.Y_LegRight = 50 - kickpos;
+	//kickpos += 5;
+	//if (kickpos == 50)
+	//{
+	//	kickpos = 0;
+	//	SC.X_RightLeg = 30;
+	//	SC.Y_LegRight = 50;
+	//}
+
+	if (judge == 1)
 	{
-		kickpos = 0;
-		SC.X_RightLeg = 30;
-		SC.Y_LegRight = 50;
+		SC.X_RightLeg = 30 + kickPos;
+		SC.Y_LegRight = 50 - kickPos;
+		kickPos += 5;
+		if (kickPos == 50)
+		{
+			kickPos = 0;
+			SC.X_RightLeg = 30;
+			SC.Y_LegRight = 50;
+		}
+	}
+
+	if (judge == 0)
+	{
+		SC.X_LeftLeg = 30 + kickPos;
+		SC.Y_LegLeft = 50 - kickPos;
+		kickPos += 5;
+		if (kickPos == 50)
+		{
+			kickPos = 0;
+			SC.X_LeftLeg = 30;
+			SC.Y_LegLeft = 50;
+		}
 	}
 }
 
-void player::punch(int &punchPos)
+void player::punch()
 {
-	SC.X_RightHandJoint_length = 40+punchPos;
+	/*SC.X_RightHandJoint_length = 40+punchPos;
 	SC.Y_RightHandJoint_length = 30-punchPos;
 	SC.X_LeftHandJoint_length2 = 20 -punchPos;
 	SC.Y_LeftHandJoint_length2= 15+ punchPos;
@@ -183,51 +218,121 @@ void player::punch(int &punchPos)
 		SC.Y_RightHandJoint_length = 30;
 		SC.X_LeftHandJoint_length2 = 20 ;
 		SC.Y_LeftHandJoint_length2 = 15 ;
+	}*/
+
+	if (judge == 1)
+	{
+		SC.X_RightHandJoint_length2 = 20 + punchPos;
+		SC.Y_RightHandJoint_length2 = 15 - punchPos;
+		SC.X_RightHandJoint_length = 20 + punchPos;
+		SC.Y_RightHandJoint_length = 15 - punchPos;
+		SC.X_LeftHandJoint_length2 = 20 - punchPos;
+		SC.Y_LeftHandJoint_length2 = 15 + punchPos;
+		punchPos += 3;
+		if (punchPos == 30)
+		{
+			punchPos = 0;
+			SC.X_RightHandJoint_length = 20;
+			SC.Y_RightHandJoint_length = 15;
+			SC.X_RightHandJoint_length2 = 20;
+			SC.Y_RightHandJoint_length2 = 15;
+			SC.X_LeftHandJoint_length2 = 20;
+			SC.Y_LeftHandJoint_length2 = 15;
+		}
 	}
 
+	if (judge == 0)
+	{
+		SC.X_LeftHandJoint_length2 = 20 + punchPos;
+		SC.Y_LeftHandJoint_length2 = 15 - punchPos;
+		SC.X_LeftHandJoint_length = 20 + punchPos;
+		SC.Y_LeftHandJoint_length = 15 - punchPos;
+		SC.X_RightHandJoint_length2 = 20 - punchPos;
+		SC.Y_RightHandJoint_length2 = 15 + punchPos;
+		punchPos += 3;
+		if (punchPos == 30)
+		{
+			punchPos = 0;
+			SC.X_LeftHandJoint_length2 = 20;
+			SC.Y_LeftHandJoint_length2 = 15;
+			SC.X_RightHandJoint_length2 = 20;
+			SC.Y_RightHandJoint_length2 = 15;
+			SC.X_LeftHandJoint_length = 20;
+			SC.Y_LeftHandJoint_length = 15;
+		}
+	}
 }
+
 // Get id die
 bool player::getIfDie(){
     return is_die;
 }
 
 // Decide if hit by someone
-void player::ifHit(int key, int &type_hit)
+void player::ifHit(int key)
 {
     // key: hit type
     // type_hit: 0 for punch, 1 for kick
     
     // Main Player
     if (num_player == 2){
-        switch (key)
-        {
-            case(FSKEY_Z):
-                type_hit = 0;
-                break;
-            case(FSKEY_X):
-                type_hit = 1;
-                break;
-        }
+		if (key == FSKEY_Z && state == 1)
+			type_hit = 0;
+
+		if (key == FSKEY_X)
+			type_hit = 1;
+
+		if (key == FSKEY_C && state == 2)
+			type_hit = 2;
+
+		if (key == FSKEY_Z && state == 3)
+			type_hit = 3;
     }
     
     // Enemy 1
-    if (num_player == 1){
-        switch (key)
-        {
-            case(FSKEY_N):
-                type_hit = 0;
-                break;
-            case(FSKEY_M):
-                type_hit = 1;
-                break;
-        }
-    }
+	if (num_player == 1){
+		if (key == FSKEY_B && state == 1)
+			type_hit = 0;
+
+		if (key == FSKEY_N)
+			type_hit = 1;
+
+		if (key == FSKEY_M && state == 2)
+			type_hit = 2;
+
+		if (key == FSKEY_B && state == 3)
+			type_hit = 3;
+	}
+}
+
+// Check the hit points left in time
+void player::handleLife()
+{
+	switch (type_hit)
+	{
+	case(0) :
+		lifeValue -= 1;
+		type_hit = -1;
+		break;
+	case(1) :
+		lifeValue -= 2;
+		type_hit = -1;
+		break;
+	case(2) :
+		lifeValue -= 5;
+		type_hit = -1;
+		break;
+	case(3) :
+		lifeValue -= 3;
+		type_hit = -1;
+		break;
+	}
 }
 
 /* Life Methods */
 
 // have to initialize static variables of class
-const int player::SIDEMAG;
+//const int player::SIDEMAG;
 
 // Draw the life bar
 void player::drawLife()
@@ -312,22 +417,6 @@ void player::drawLife()
     
 }
 
-// Check the hit points left in time
-void player::handleLife(int &type_hit)
-{
-    switch (type_hit)
-    {
-        case(0):
-            lifeValue -= 1;
-            type_hit = -1;
-            break;
-        case(1):
-            lifeValue -= 2;
-            type_hit = -1;
-            break;
-    }
-}
-
 // Check if the player dies
 void player::checkIfDie(bool &terminate)
 {
@@ -340,33 +429,33 @@ void player::checkIfDie(bool &terminate)
     }
 }
 
-void createBlood(Coordinate origin, int &BloodPos)
-{
-	glLineWidth(3);
-	glColor3f(255, 0, 0);
-	glBegin(GL_LINES);
-	glVertex2i(origin.x + 10+ BloodPos, origin.y-8- BloodPos);
-	glVertex2i(origin.x + 14+ BloodPos, origin.y-12 - BloodPos);
-	glVertex2i(origin.x , origin.y-8- BloodPos);
-	glVertex2i(origin.x , origin.y-12- BloodPos);
-	glVertex2i(origin.x - 10 - BloodPos, origin.y-8- BloodPos);
-	glVertex2i(origin.x - 14 - BloodPos, origin.y-12- BloodPos);
-	glVertex2i(origin.x + 20+ BloodPos, origin.y - 28- BloodPos);
-	glVertex2i(origin.x + 24+ BloodPos, origin.y - 32- BloodPos);
-	glVertex2i(origin.x, origin.y - 28- BloodPos);
-	glVertex2i(origin.x, origin.y - 32- BloodPos);
-	glVertex2i(origin.x - 20- BloodPos, origin.y - 28- BloodPos);
-	glVertex2i(origin.x - 24- BloodPos, origin.y - 32- BloodPos);
-	//drawCircle(origin,100, TRUE);
-	//glEnd();
-	glFlush();
-	BloodPos++;
-	if (BloodPos == 10)
-		BloodPos = 0;
+//void createBlood(Coordinate origin, int &BloodPos)
+//{
+//	glLineWidth(3);
+//	glColor3f(255, 0, 0);
+//	glBegin(GL_LINES);
+//	glVertex2i(origin.x + 10+ BloodPos, origin.y-8- BloodPos);
+//	glVertex2i(origin.x + 14+ BloodPos, origin.y-12 - BloodPos);
+//	glVertex2i(origin.x , origin.y-8- BloodPos);
+//	glVertex2i(origin.x , origin.y-12- BloodPos);
+//	glVertex2i(origin.x - 10 - BloodPos, origin.y-8- BloodPos);
+//	glVertex2i(origin.x - 14 - BloodPos, origin.y-12- BloodPos);
+//	glVertex2i(origin.x + 20+ BloodPos, origin.y - 28- BloodPos);
+//	glVertex2i(origin.x + 24+ BloodPos, origin.y - 32- BloodPos);
+//	glVertex2i(origin.x, origin.y - 28- BloodPos);
+//	glVertex2i(origin.x, origin.y - 32- BloodPos);
+//	glVertex2i(origin.x - 20- BloodPos, origin.y - 28- BloodPos);
+//	glVertex2i(origin.x - 24- BloodPos, origin.y - 32- BloodPos);
+//	//drawCircle(origin,100, TRUE);
+//	//glEnd();
+//	glFlush();
+//	BloodPos++;
+//	if (BloodPos == 10)
+//		BloodPos = 0;
+//
+//}
 
-}
-
-void player::Jump(float dt,float &v, bool &InAir)
+void player::Jump(float dt)
 {
 	StickyManOrigin.y = StickyManOrigin.y - 0.5*(9.80)*(dt*dt) - v* dt;
 	v = v + (-9.80)*dt;
@@ -399,7 +488,7 @@ void player::showText()
 
 
 
-void player::knife_position(bool downPressed, bool InAir)
+void player::knife_position()
 {
 	int rad = 20;
 	if (downPressed == FALSE)
@@ -418,16 +507,16 @@ void player::knife_position(bool downPressed, bool InAir)
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
 
 		//right arm setup
-		double ratio = 0.4;   // need to check integer input
-		knife.x_righthand_joint = StickyManOrigin.x + SC.X_RightHandJoint_length*ratio - 1; // store the number in struct
-		knife.y_righthand_joint = StickyManOrigin.y + rad + SC.Y_RightHandJoint_length*ratio + 4;
+		double ratio = 0.4;   // need to check integer input;
+		knife.x_righthand_joint = StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2)*ratio - 1; // store the number in struct
+		knife.y_righthand_joint = StickyManOrigin.y + rad + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2)*ratio + 4;
 		//right upper arm
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
 		glVertex2i(knife.x_righthand_joint, knife.y_righthand_joint);
 
 		//right lower arm
-		knife.x_righthand = knife.x_righthand_joint + SC.X_RightHandJoint_length*(1 - ratio - 0.2);
-		knife.y_righthand = knife.y_righthand_joint - SC.Y_RightHandJoint_length*(ratio - 0.2);
+		knife.x_righthand = knife.x_righthand_joint + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2)*(1 - ratio - 0.2);
+		knife.y_righthand = knife.y_righthand_joint - (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2)*(ratio - 0.2);
 
 		glVertex2i(knife.x_righthand_joint, knife.y_righthand_joint);
 		glVertex2i(knife.x_righthand, knife.y_righthand);
@@ -466,15 +555,15 @@ void player::knife_position(bool downPressed, bool InAir)
 
 		//right arm setup
 		double ratio = 0.4;   // need to check integer input
-		knife.x_righthand_joint = StickyManOrigin.x + SC.X_RightHandJoint_length*ratio - 1; // store the number in struct
-		knife.y_righthand_joint = StickyManOrigin.y + rad + SC.Y_RightHandJoint_length*ratio + 4;
+		knife.x_righthand_joint = StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2)*ratio - 1; // store the number in struct
+		knife.y_righthand_joint = StickyManOrigin.y + rad + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2)*ratio + 4;
 		//right upper arm
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
 		glVertex2i(knife.x_righthand_joint, knife.y_righthand_joint);
 
 		//right lower arm
-		knife.x_righthand = knife.x_righthand_joint + SC.X_RightHandJoint_length*(1 - ratio - 0.2);
-		knife.y_righthand = knife.y_righthand_joint - SC.Y_RightHandJoint_length*(ratio - 0.2);
+		knife.x_righthand = knife.x_righthand_joint + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2)*(1 - ratio - 0.2);
+		knife.y_righthand = knife.y_righthand_joint - (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2)*(ratio - 0.2);
 
 		glVertex2i(knife.x_righthand_joint, knife.y_righthand_joint);
 		glVertex2i(knife.x_righthand, knife.y_righthand);
@@ -529,83 +618,312 @@ void player::knife_position(bool downPressed, bool InAir)
 
 }
 
-void player::laser_position(bool downPressed, bool InAir) {
+void player::laser_position() {
 	int rad = 20;
 	if (downPressed == FALSE)
 	{
-		SC.lenght = 80;
-		if (InAir == FALSE)
-			StickyManOrigin.y = 450;
+		if (judge == 1)
+		{
+			SC.lenght = 80;
+			if (InAir == FALSE)
+				StickyManOrigin.y = 450;
 
-		glLineWidth(15);
-		glColor3f(0.0, 0.0, 0);
-		glBegin(GL_LINES);
+			glLineWidth(15);
+			glColor3f(0.0, 0.0, 0);
+			glBegin(GL_LINES);
 
-		//body
-		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
-		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+			//body
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
 
-		//right arm setup
-		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + 10);
-		glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y);
+			//right arm setup
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + 10);
+			glVertex2i(StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2) - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y);
 
-		//left upper arm
-		int adjust = 5;   // based on the default stickerman figure
+			//left upper arm
+			int adjust = 5;   // based on the default stickerman figure
 
-		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
-		glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+			glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
 
-		//left lower arm
-		glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
-		glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2 - 5, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2 + adjust);
+			//left lower arm
+			glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
+			glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2 - 5, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2 + adjust);
 
-		//right leg setup
-		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
-		glVertex2i(StickyManOrigin.x + SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
+			//right leg setup
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+			glVertex2i(StickyManOrigin.x + SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
 
-		//left leg
-		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
-		glVertex2i(StickyManOrigin.x - SC.X_LeftLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegLeft);
+			//left leg
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+			glVertex2i(StickyManOrigin.x - SC.X_LeftLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegLeft);
 
-		glEnd();
+			glEnd();
 
-		glColor3f(0, 0, 0);
-		drawCircle(StickyManOrigin, rad, true);
+			glColor3f(0, 0, 0);
+			drawCircle(StickyManOrigin, rad, true);
 
-		//draw gun
-		glShadeModel(GL_SMOOTH);
-		glLineWidth(16);
-		glColor3ub(0, 0, 255);
-		glBegin(GL_LINES);
+			//draw gun
+			glShadeModel(GL_SMOOTH);
+			glLineWidth(16);
+			glColor3ub(0, 0, 255);
+			glBegin(GL_LINES);
 
-		int gunwidth = 20;
-		int right_hand_x = StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x;
-		int right_hand_y = StickyManOrigin.y + rad + 10 + raisearm.y;
+			int gunwidth = 20;
+			int right_hand_x = StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2) - 5 + raisearm.x;
+			int right_hand_y = StickyManOrigin.y + rad + 10 + raisearm.y;
 
-		// lower end of gun
-		glVertex2i(right_hand_x, right_hand_y + 7);
-		glColor3ub(0, 204, 255);
-		glVertex2i(right_hand_x, right_hand_y - 7);
+			// lower end of gun
+			glVertex2i(right_hand_x, right_hand_y + 7);
+			glColor3ub(0, 204, 255);
+			glVertex2i(right_hand_x, right_hand_y - 7);
 
-		// gun tube
-		guntip.y = right_hand_y - 7;
-		guntip.x = right_hand_x + gunwidth;
-		glColor3ub(0, 204, 0);
-		glVertex2i(right_hand_x, guntip.y);
-		glColor3ub(204, 204, 0);
-		glVertex2i(guntip.x, guntip.y);
-		glEnd();
+			// gun tube
+			guntip.y = right_hand_y - 7;
+			guntip.x = right_hand_x + gunwidth;
+			glColor3ub(0, 204, 0);
+			glVertex2i(right_hand_x, guntip.y);
+			glColor3ub(204, 204, 0);
+			glVertex2i(guntip.x, guntip.y);
+			glEnd();
 
-		//trigger
-		glLineWidth(13);
-		glColor3ub(152, 153, 255);
-		glBegin(GL_LINES);
-		int length = 6;
-		glVertex2i(right_hand_x - length, right_hand_y - 8 - length - raisearm.y);
-		glVertex2i(right_hand_x, right_hand_y - 8);
+			//trigger
+			glLineWidth(13);
+			glColor3ub(152, 153, 255);
+			glBegin(GL_LINES);
+			int length = 6;
+			glVertex2i(right_hand_x - length, right_hand_y - 8 - length - raisearm.y);
+			glVertex2i(right_hand_x, right_hand_y - 8);
+		}
+		else
+		{
+			SC.lenght = 80;
+			if (InAir == FALSE)
+				StickyManOrigin.y = 450;
+
+			glLineWidth(15);
+			glColor3f(0.0, 0.0, 0);
+			glBegin(GL_LINES);
+
+			//body
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+
+			//right arm setup
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + 10);
+			glVertex2i(StickyManOrigin.x - (SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2) + 5 - raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y);
+
+			//left upper arm
+			int adjust = 5;   // based on the default stickerman figure
+
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+			glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length + adjust);
+
+			//left lower arm
+			glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length + adjust);
+			glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length - SC.X_RightHandJoint_length2 - 5, StickyManOrigin.y + rad + SC.Y_RightHandJoint_length + SC.Y_RightHandJoint_length2 + adjust);
+
+			//right leg setup
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+			glVertex2i(StickyManOrigin.x + SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
+
+			//left leg
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+			glVertex2i(StickyManOrigin.x - SC.X_LeftLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegLeft);
+
+			glEnd();
+
+			glColor3f(0, 0, 0);
+			drawCircle(StickyManOrigin, rad, true);
+
+			//draw gun
+			glShadeModel(GL_SMOOTH);
+			glLineWidth(16);
+			glColor3ub(0, 0, 255);
+			glBegin(GL_LINES);
+
+			int gunwidth = 20;
+			int left_hand_x = StickyManOrigin.x - (SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2) + 5 - raisearm.x;
+			int left_hand_y = StickyManOrigin.y + rad + 10 + raisearm.y;
+
+			// lower end of gun
+			glVertex2i(left_hand_x, left_hand_y + 7);
+			glColor3ub(0, 204, 255);
+			glVertex2i(left_hand_x, left_hand_y - 7);
+
+			// gun tube
+			guntip.y = left_hand_y - 7;
+			guntip.x = left_hand_x - gunwidth;
+			glColor3ub(0, 204, 0);
+			glVertex2i(left_hand_x, guntip.y);
+			glColor3ub(204, 204, 0);
+			glVertex2i(guntip.x, guntip.y);
+			glEnd();
+
+			//trigger
+			glLineWidth(13);
+			glColor3ub(152, 153, 255);
+			glBegin(GL_LINES);
+			int length = 6;
+			glVertex2i(left_hand_x + length, left_hand_y - 8 - length - raisearm.y);
+			glVertex2i(left_hand_x, left_hand_y - 8);
+		}
+
+		//SC.lenght = 80;
+		//if (InAir == FALSE)
+		//	StickyManOrigin.y = 450;
+
+		//glLineWidth(15);
+		//glColor3f(0.0, 0.0, 0);
+		//glBegin(GL_LINES);
+
+		////body
+		//glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+		//glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+
+		////right arm setup
+		//glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + 10);
+		//glVertex2i(StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2) - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y);
+
+		////left upper arm
+		//int adjust = 5;   // based on the default stickerman figure
+
+		//glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+		//glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
+
+		////left lower arm
+		//glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
+		//glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2 - 5, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2 + adjust);
+
+		////right leg setup
+		//glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+		//glVertex2i(StickyManOrigin.x + SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
+
+		////left leg
+		//glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+		//glVertex2i(StickyManOrigin.x - SC.X_LeftLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegLeft);
+
+		//glEnd();
+
+		//glColor3f(0, 0, 0);
+		//drawCircle(StickyManOrigin, rad, true);
+
+		////draw gun
+		//glShadeModel(GL_SMOOTH);
+		//glLineWidth(16);
+		//glColor3ub(0, 0, 255);
+		//glBegin(GL_LINES);
+
+		//int gunwidth = 20;
+		//int right_hand_x = StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2) - 5 + raisearm.x;
+		//int right_hand_y = StickyManOrigin.y + rad + 10 + raisearm.y;
+
+		//// lower end of gun
+		//glVertex2i(right_hand_x, right_hand_y + 7);
+		//glColor3ub(0, 204, 255);
+		//glVertex2i(right_hand_x, right_hand_y - 7);
+
+		//// gun tube
+		//guntip.y = right_hand_y - 7;
+		//guntip.x = right_hand_x + gunwidth;
+		//glColor3ub(0, 204, 0);
+		//glVertex2i(right_hand_x, guntip.y);
+		//glColor3ub(204, 204, 0);
+		//glVertex2i(guntip.x, guntip.y);
+		//glEnd();
+
+		////trigger
+		//glLineWidth(13);
+		//glColor3ub(152, 153, 255);
+		//glBegin(GL_LINES);
+		//int length = 6;
+		//glVertex2i(right_hand_x - length, right_hand_y - 8 - length - raisearm.y);
+		//glVertex2i(right_hand_x, right_hand_y - 8);
 	}
 	else
 	{
+		if (judge == 1)
+		{
+			SC.lenght = 60;
+			StickyManOrigin.y = 480;
+
+			glLineWidth(15);
+			glColor3f(0.0, 0.0, 0);
+			glBegin(GL_LINES);
+
+			//body
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+
+			//right arm setup
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + 10);
+			glVertex2i(StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2) - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y);
+
+			//left upper arm
+			int adjust = 5;   // based on the default stickerman figure
+
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
+			glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
+
+			//left lower arm
+			glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
+			glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2 - 5, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2 + adjust);
+
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+			glVertex2i(StickyManOrigin.x + 15, StickyManOrigin.y + rad + SC.lenght + 20);
+
+			glVertex2i(StickyManOrigin.x + 15, StickyManOrigin.y + rad + SC.lenght + 20);
+			glVertex2i(StickyManOrigin.x + 5, StickyManOrigin.y + rad + SC.lenght + 40);
+
+			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
+			glVertex2i(StickyManOrigin.x - 15, StickyManOrigin.y + rad + SC.lenght + 20);
+
+			glVertex2i(StickyManOrigin.x - 15, StickyManOrigin.y + rad + SC.lenght + 20);
+			glVertex2i(StickyManOrigin.x - 5, StickyManOrigin.y + rad + SC.lenght + 40);
+
+			glEnd();
+
+			glColor3f(0, 0, 0);
+			drawCircle(StickyManOrigin, rad, true);
+
+			//draw gun
+			glShadeModel(GL_SMOOTH);
+			glLineWidth(16);
+			glColor3ub(0, 0, 255);
+			glBegin(GL_LINES);
+
+			int gunwidth = 20;
+			int right_hand_x = StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2) - 5 + raisearm.x;
+			int right_hand_y = StickyManOrigin.y + rad + 10 + raisearm.y;
+
+			// lower end of gun
+			glVertex2i(right_hand_x, right_hand_y + 7);
+			glColor3ub(0, 204, 255);
+			glVertex2i(right_hand_x, right_hand_y - 7);
+
+			// gun tube
+			guntip.y = right_hand_y - 7;
+			guntip.x = right_hand_x + gunwidth;
+			glColor3ub(0, 204, 0);
+			glVertex2i(right_hand_x, guntip.y);
+			glColor3ub(204, 204, 0);
+			glVertex2i(guntip.x, guntip.y);
+			glEnd();
+
+			//trigger
+			glLineWidth(13);
+			glColor3ub(152, 153, 255);
+			glBegin(GL_LINES);
+			int length = 6;
+			glVertex2i(right_hand_x - length, right_hand_y - 8 - length - raisearm.y);
+			glVertex2i(right_hand_x, right_hand_y - 8);
+		}
+		else
+		{
+
+		}
+
+
 		SC.lenght = 60;
 		StickyManOrigin.y = 480;
 
@@ -619,7 +937,7 @@ void player::laser_position(bool downPressed, bool InAir) {
 
 		//right arm setup
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + 10);
-		glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y);
+		glVertex2i(StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2) - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y);
 
 		//left upper arm
 		int adjust = 5;   // based on the default stickerman figure
@@ -655,7 +973,7 @@ void player::laser_position(bool downPressed, bool InAir) {
 		glBegin(GL_LINES);
 
 		int gunwidth = 20;
-		int right_hand_x = StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x;
+		int right_hand_x = StickyManOrigin.x + (SC.X_RightHandJoint_length + SC.X_RightHandJoint_length2) - 5 + raisearm.x;
 		int right_hand_y = StickyManOrigin.y + rad + 10 + raisearm.y;
 
 		// lower end of gun
@@ -684,8 +1002,10 @@ void player::laser_position(bool downPressed, bool InAir) {
 
 }
 
-void player::bullet_init() {
-	if (!bullet_visible) {
+void player::bullet_init()
+{
+	if (!bullet_visible) 
+	{
 		laser_traj.x = guntip.x;
 		laser_traj.y = guntip.y;
 		bullet_visible = true;
@@ -693,8 +1013,10 @@ void player::bullet_init() {
 }
 
 
-void player::draw_laser() {
-	if (bullet_visible) {
+void player::draw_laser() 
+{
+	if (bullet_visible) 
+	{
 		glLineWidth(40);
 		glColor3ub(255, 0, 255);
 		glBegin(GL_LINES);
@@ -702,10 +1024,10 @@ void player::draw_laser() {
 		glVertex2i(laser_traj.x, laser_traj.y);
 		glEnd();
 	}
-
 }
 
-void player::laser_move() {
+void player::laser_move() 
+{
 	if (bullet_visible) {
 		laser_traj.x += 15;   // the speed of laser
 		cout << "move once" << endl;

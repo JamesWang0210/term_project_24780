@@ -8,7 +8,6 @@
 #include "ysglfontdata.h"
 #include "yssimplesound.h"
 
-
 using namespace std;
 
 struct Coordinate
@@ -26,6 +25,8 @@ struct StickyManCoordinates
 	int Y_LeftHandJoint_length;
 	int X_LeftHandJoint_length2;
 	int Y_LeftHandJoint_length2;
+	int X_RightHandJoint_length2;
+	int Y_RightHandJoint_length2;
 	int X_LeftLegJoint_length;
 	int X_RightLeg;
 	int X_LeftLeg;
@@ -60,7 +61,7 @@ private:
 	StickyManCoordinates SC;
     
     /* Life Variables */
-    static const int SIDEMAG = 3;
+    static const int SIDEMAG = 3; 
     
     int life_tot;
     
@@ -79,40 +80,52 @@ private:
 	Coordinate guntip;
 	Coordinate raisearm;
 
-
 public:
-    player(int lv, float lx, float ly, int num, bool main);
-	void draw(bool downPressed,bool InAir);
-	void moveLeft();
-	void moveRight(); // change the origin coordinates, store the new leg coordinates/new config
+	int judge = 0;
+	int judge_gun;
+	int state;							// State of the Player
 
-	void punch(int &punchPos); // store the new coordinates for the arm/new config
-	void kick(int &kickpos); // store the new coordinates for the leg/new config
+	bool InAir = FALSE;
+	bool downPressed = FALSE;
+	int type_hit = -1;
+
+	int punchPos = 0;
+	int kickPos = 0;
+
+	float v = 50;
+
+    player(int x, int y, int lv, float lx, float ly, int num, bool main);
+	void draw();
+	void moveLeft();
+	void moveRight();							// change the origin coordinates, store the new leg coordinates/new config
+
+	void punch();								// store the new coordinates for the arm/new config
+	void kick();								// store the new coordinates for the leg/new config
     
-    bool getIfDie();                            // Get if die
-    void ifHit(int key, int &type_hit);         // Deice if hit
+    bool getIfDie();							// Get if die
+    void ifHit(int key);						// Deice if hit
     
     /* Life Methods */
     void drawLife();                            // Draw the life bar
-    void handleLife(int &type_hit);             // Check the hit points left in time
+    void handleLife();							// Check the hit points left in time
     void checkIfDie(bool &terminate);           // Check if the player dies
 	Coordinate get_origin() { return StickyManOrigin; }
-	void Jump(float dt, float &v, bool &InAir);
+	void Jump(float dt);
 	void showText();
 
 
 	void raise_arm();
-	void knife_position(bool downPressed, bool InAir);                      // ADD:draw the knife position
-	void laser_position(bool downPressed, bool InAir);                      // ADD:draw the laser position
+	void knife_position();                      // ADD:draw the knife position
+	void laser_position();                      // ADD:draw the laser position
 	void draw_laser();
 	void laser_move();
 	void bullet_init();
-	bool bulletvisible();       // return bullet visible status
-	bool bullet_hit();          // return whether bullet hit
-	int raisearm_x();           // arm position raised
+	bool bulletvisible();						// return bullet visible status
+	bool bullet_hit();							// return whether bullet hit
+	int raisearm_x();							// arm position raised
 
 
 };
 
-void createBlood(Coordinate origin,int &BloodPos);
+//void createBlood(Coordinate origin,int &BloodPos);
 
