@@ -29,9 +29,14 @@ player::player(int lv, float lx, float ly, int num, bool main)
     num_player = num;
     is_main = main;
 
+	// init_gun()
+	for (int i = 0;i < 6;i++) {
+		bullets[i].x = guntip.x;
+		bullets[i].y = guntip.y;
+		bullets[i].isvisible = false;
 
-	raisearm.x = 0;
-	raisearm.y = 0;
+	}
+
 
 }
 
@@ -175,7 +180,7 @@ void player::draw()
     
     glEnd();
     
-    glColor3f(1, 0, 0);
+    glColor3f(0, 0, 0);
     drawCircle(StickyManOrigin, rad, true);
 
 	/*if (SC.X_RightHandJoint_length!=40)
@@ -193,12 +198,12 @@ void player::moveLeft()
 	if (StickyManOrigin.x < 30)
 		StickyManOrigin.x = 30;
 	if (SC.X_RightLeg == 30)
-		SC.X_RightLeg = -20;
+		SC.X_RightLeg = 20;
 	else
 		SC.X_RightLeg = 30;
 
 	if (SC.X_LeftLeg == 30)
-		SC.X_LeftLeg = -20;
+		SC.X_LeftLeg = 20;
 	else
 		SC.X_LeftLeg = 30;
 
@@ -210,12 +215,12 @@ void player::moveRight()
 	if (StickyManOrigin.x > 770)
 		StickyManOrigin.x = 770;
 	if (SC.X_RightLeg == 30)
-		SC.X_RightLeg = -20;
+		SC.X_RightLeg = 20;
 	else
 		SC.X_RightLeg = 30;
 
 	if (SC.X_LeftLeg == 30)
-		SC.X_LeftLeg = -20;
+		SC.X_LeftLeg = 20;
 	else
 		SC.X_LeftLeg = 30;
 
@@ -433,8 +438,62 @@ void player::checkIfDie(bool &terminate)
     }
 }
 
+void createBlood(Coordinate origin, int &BloodPos)
+{
+	glLineWidth(3);
+	glColor3f(255, 0, 0);
+	glBegin(GL_LINES);
+	glVertex2i(origin.x + 10+ BloodPos, origin.y-8- BloodPos);
+	glVertex2i(origin.x + 14+ BloodPos, origin.y-12 - BloodPos);
+	glVertex2i(origin.x , origin.y-8- BloodPos);
+	glVertex2i(origin.x , origin.y-12- BloodPos);
+	glVertex2i(origin.x - 10 - BloodPos, origin.y-8- BloodPos);
+	glVertex2i(origin.x - 14 - BloodPos, origin.y-12- BloodPos);
+	glVertex2i(origin.x + 20+ BloodPos, origin.y - 28- BloodPos);
+	glVertex2i(origin.x + 24+ BloodPos, origin.y - 32- BloodPos);
+	glVertex2i(origin.x, origin.y - 28- BloodPos);
+	glVertex2i(origin.x, origin.y - 32- BloodPos);
+	glVertex2i(origin.x - 20- BloodPos, origin.y - 28- BloodPos);
+	glVertex2i(origin.x - 24- BloodPos, origin.y - 32- BloodPos);
+	//drawCircle(origin,100, TRUE);
+	//glEnd();
+	glFlush();
+	BloodPos++;
+	if (BloodPos == 10)
+		BloodPos = 0;
 
+}
 
+void player::Jump(float dt,float &v, bool &InAir)
+{
+	StickyManOrigin.y = StickyManOrigin.y - 0.5*(9.80)*(dt*dt) - v* dt;
+	v = v + (-9.80)*dt;
+	InAir = TRUE;
+	if (StickyManOrigin.y >= 450)
+	{
+		StickyManOrigin.y = 450;
+		InAir = FALSE;
+		v = 30;
+	}
+}
+
+void player::showText()
+{
+	glColor3f(256, 0, 0);                            // Yellow as default
+	glBegin(GL_QUADS);                                  // Rectangular Life Bar
+
+	glVertex2i(StickyManOrigin.x - 200, StickyManOrigin.y - 50);
+	glVertex2i(StickyManOrigin.x + 250, StickyManOrigin.y - 50);
+	glVertex2i(StickyManOrigin.x + 250, StickyManOrigin.y-80);
+	glVertex2i(StickyManOrigin.x - 200, StickyManOrigin.y - 80);
+
+	glEnd();
+	glColor3ub(1, 1, 0);
+	glRasterPos2i(StickyManOrigin.x-200, StickyManOrigin.y-50);
+	YsGlDrawFontBitmap20x32("Show me what you've got");
+	FsSwapBuffers();
+	FsSleep(1000);
+}
 
 
 
@@ -488,8 +547,8 @@ void player::knife_position()
 
 	//right arm setup
 	double ratio = 0.4;   // need to check integer input
-	knife.x_righthand_joint = StickyManOrigin.x + SC.X_RightHandJoint_length*ratio-1; // store the number in struct
-	knife.y_righthand_joint = StickyManOrigin.y + rad + SC.Y_RightHandJoint_length*ratio+4;
+	knife.x_righthand_joint = StickyManOrigin.x + SC.X_RightHandJoint_length*ratio - 1; // store the number in struct
+	knife.y_righthand_joint = StickyManOrigin.y + rad + SC.Y_RightHandJoint_length*ratio + 4;
 	//right upper arm
 	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
 	glVertex2i(knife.x_righthand_joint, knife.y_righthand_joint);
@@ -521,7 +580,7 @@ void player::knife_position()
 
 	glEnd();
 
-	glColor3f(1, 0, 0);
+	glColor3f(0, 0, 0);
 	drawCircle(StickyManOrigin, rad, true);
 
 	//Draw knife
@@ -567,7 +626,7 @@ void player::laser_position() {
 
 	//right arm setup
 	glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + 10);
-	glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y );
+	glVertex2i(StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x, StickyManOrigin.y + rad + 10 + raisearm.y);
 
 	//left upper arm
 	int adjust = 5;   // based on the default stickerman figure
@@ -576,7 +635,7 @@ void player::laser_position() {
 	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
 
 	//left lower arm
-	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);  
+	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + adjust);
 	glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length + SC.X_LeftHandJoint_length2 - 5, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length + SC.Y_LeftHandJoint_length2 + adjust);
 
 	//right leg setup
@@ -589,7 +648,7 @@ void player::laser_position() {
 
 	glEnd();
 
-	glColor3f(1, 0, 0);
+	glColor3f(0, 0, 0);
 	drawCircle(StickyManOrigin, rad, true);
 
 	//draw gun
@@ -600,14 +659,14 @@ void player::laser_position() {
 
 	int gunwidth = 20;
 	int right_hand_x = StickyManOrigin.x + SC.X_RightHandJoint_length - 5 + raisearm.x;
-	int right_hand_y = StickyManOrigin.y + rad + 10 +raisearm.y;
+	int right_hand_y = StickyManOrigin.y + rad + 10 + raisearm.y;
 
-	   // lower end of gun
+	// lower end of gun
 	glVertex2i(right_hand_x, right_hand_y + 7);
 	glColor3ub(0, 204, 255);
 	glVertex2i(right_hand_x, right_hand_y - 7);
 
-	  // gun tube
+	// gun tube
 	guntip.y = right_hand_y - 7;
 	guntip.x = right_hand_x + gunwidth;
 	glColor3ub(0, 204, 0);
@@ -627,36 +686,6 @@ void player::laser_position() {
 
 }
 
-void player::bullet_init() {
-	if (!bullet_visible) {
-		laser_traj.x = guntip.x;
-		laser_traj.y = guntip.y;
-		bullet_visible = true;
-	}
-}
-
-
-void player::draw_laser() {
-	if (bullet_visible) {
-		glLineWidth(40);
-		glColor3ub(255, 0, 255);
-		glBegin(GL_LINES);
-		glVertex2i(laser_traj.x-20, laser_traj.y);
-		glVertex2i(laser_traj.x, laser_traj.y);
-		glEnd();
-	}
-	
-}
-
-void player::laser_move() {
-	if (bullet_visible) {
-		laser_traj.x += 15;   // the speed of laser
-		cout << "move once" << endl;
-		if ((laser_traj.x > 800) || (laser_traj.x < 0) || (bullethit == true))
-			bullet_visible = false;
-	}
-	
-}
 
 void player::raise_arm() {
 	raisearm.x += -1;
@@ -665,17 +694,89 @@ void player::raise_arm() {
 		raisearm.x = raisearm.y = 0;
 	}
 }
-// stick, knife, layser
+
+
+int player::raisearm_x() { // get raise arm state info
+	return raisearm.x;
+}
+
+void player::draw_lasers() {
+	// loop through the vector
+	for (int i =0;i<6;i++)
+	 {
+		if (bullets[i].isvisible == true) {
+			cout << bullets[i].x << endl;
+			glLineWidth(40);
+			glColor3ub(255, 0, 255);
+			glBegin(GL_LINES);
+			glVertex2i(bullets[i].x - 20, bullets[i].y);
+			glVertex2i(bullets[i].x, bullets[i].y);
+			glEnd();
+		}
+	}
+
+}
+
+void player::process_lasers() {
+	for (int i = 0;i<6;i++)
+	{
+			//cout << "move once" << endl;
+		if ((bullets[i].x > 800) || (bullets[i].x < 0) || (bullets[i].bullethit == true)) {
+			bullets[i].isvisible = false;
+		}
+	}
+
+}
+
+void player::laser_move() {
+	for (int i = 0;i < 6;i++) {
+		if (bullets[i].isvisible == true) {
+			bullets[i].x += 15;
+		}
+	}
+}
+
+
+int player::bullets_on() { 
+	int num = 0;
+	for (int i = 0;i < 6;i++) {
+		if (bullets[i].isvisible == true) {
+			num += 1;
+		}
+	}
+	return num;
+}
+
+
+void player::start_a_bullet() {
+	for (int i = 0;i < 6;i++) {
+		//&& bullets[i].x == guntip.x && bullets[i].y == guntip.y
+		if (bullets[i].isvisible == false ) {
+			bullets[i].isvisible = true;
+			bullets[i].x = guntip.x - raisearm.x;
+			bullets[i].y = guntip.y - raisearm.y;
+			cout << "One bullet on" << endl;
+			break;
+		}
+	}
+}
+
+void player::draw_reload() {
+	if (bullets_on() == 6) {
+		//draw reload figure
+
+
+	}
+	
+}
+
 
 bool player::bulletvisible() {
-	return bullet_visible;
-
+	//return bullet_visible;
+	return 0;
 }
 
 bool player::bullet_hit() {
-	return bullethit;
-}
-
-int player::raisearm_x() {
-	return raisearm.x;
+	//return bullethit;
+	return 0;
 }

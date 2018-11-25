@@ -6,6 +6,7 @@
 #include <math.h>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
+#include <vector>
 
 using namespace std;
 
@@ -43,33 +44,28 @@ struct knifeCoordinates {
 	int y_knife_shield_l;
 	int x_knife_shield_r;
 	int y_knife_shield_r;
-	
-	int x_lefthand;                         
+
+	int x_lefthand;
 	int y_lefthand;
 	int x_righthand;
 	int y_righthand;
+};
+
+struct lasers {
+	bool isvisible;
+	bool bullethit = false; // determine whether hit by a character
+	float x;
+	float y;
 };
 
 
 class player
 {
 private:
-	//int oriX, oriY, height, width;
-	//char *pixels;
+	knifeCoordinates knife;
 	Coordinate StickyManOrigin;
 	StickyManCoordinates SC;
-	knifeCoordinates knife;
-	Coordinate laser_traj;
-	bool bullet_visible = false;
-	bool bullethit = false; // determine whether hit by a character
-	Coordinate guntip;
-	Coordinate raisearm;
-
-
-
-
-
-
+    
     /* Life Variables */
     static const int SIDEMAG = 3;
     
@@ -84,8 +80,19 @@ private:
     bool is_die = false;            // Whether the player die
 
 
+	//Coordinate laser_traj;
+	//bool bullet_visible = false;
 
+	Coordinate guntip;
+	Coordinate raisearm;
 
+	lasers b1;
+	lasers b2;
+	lasers b3;
+	lasers b4;
+	lasers b5;
+	lasers b6;
+	lasers bullets[6] = { b1,b2,b3,b4,b5,b6 };             // an array of laser data
 
 
 public:
@@ -110,20 +117,31 @@ public:
     void drawLife();                            // Draw the life bar
     void handleLife(int &type_hit);             // Check the hit points left in time
     void checkIfDie(bool &terminate);           // Check if the player dies
+	Coordinate get_origin() { return StickyManOrigin; }
+	void Jump(float dt, float &v, bool &InAir);
+	void showText();
 
-
-
-
-	bool bulletvisible();
-	bool bullet_hit();
-	int raisearm_x();
 
 	void raise_arm();
 	void knife_position();                      // ADD:draw the knife position
 	void laser_position();                      // ADD:draw the laser position
-	void draw_laser(); 
+
+	// * Laser processing * // 
+	void draw_lasers();
+	void process_lasers();
 	void laser_move();
-	void bullet_init();
+	void start_a_bullet();         // 
+	   bool bulletvisible();       // return bullet visible status
+	   bool bullet_hit();          // return whether bullet hit
+	int raisearm_x();           // arm position raised
+	int bullets_on();           // the number of bullets that are on screen
+	void draw_reload();
+
+
+
+
 };
+
+void createBlood(Coordinate origin,int &BloodPos);
 
 
