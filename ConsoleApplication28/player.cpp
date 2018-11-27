@@ -276,31 +276,32 @@ void player::ifHit(int key)
     
     // Main Player
     if (num_player == 2){
-		if (key == FSKEY_Z && state == 1)
+		if (key == FSKEY_Z && state == 3)
 			type_hit = 0;
 
 		if (key == FSKEY_X)
 			type_hit = 1;
 
-		if (key == FSKEY_C && state == 2)
-			type_hit = 2;
+		/*if (key == FSKEY_C && state == 2)
 
-		if (key == FSKEY_Z && state == 3)
+			type_hit = 2;*/
+
+		if (key == FSKEY_Z && state == 1)
 			type_hit = 3;
     }
     
     // Enemy 1
-	if (num_player == 1){
-		if (key == FSKEY_B && state == 1)
+	else if (num_player == 1){
+		if (key == FSKEY_B && state == 3)
 			type_hit = 0;
 
 		if (key == FSKEY_N)
 			type_hit = 1;
 
-		if (key == FSKEY_M && state == 2)
-			type_hit = 2;
+		/*if (key == FSKEY_M && state == 2)
+			type_hit = 2;*/
 
-		if (key == FSKEY_B && state == 3)
+		if (key == FSKEY_B && state == 1)
 			type_hit = 3;
 	}
 }
@@ -339,7 +340,7 @@ void player::drawLife()
 {
     int hp_percent = (100*lifeValue) / life_tot ;        // the percent of HP health remaining
 	//cout << life_tot << endl;
-	cout << hp_percent << endl;
+	//cout << hp_percent << endl;
     double long_side = lifeValue * SIDEMAG;             // Long Side of Life Bar
     double short_side = 30;
     
@@ -421,8 +422,7 @@ void player::drawLife()
 void player::checkIfDie(bool &terminate)
 {
     if (lifeValue <= 0){
-        if (is_main)
-            terminate = true;
+		terminate = true;
         is_die = true;
     } else {
         is_die = false;
@@ -1030,7 +1030,7 @@ void player::laser_move()
 {
 	if (bullet_visible) {
 		laser_traj.x += 15;   // the speed of laser
-		cout << "move once" << endl;
+		//cout << "move once" << endl;
 		if ((laser_traj.x > 800) || (laser_traj.x < 0) || (bullethit == true))
 			bullet_visible = false;
 	}
@@ -1049,8 +1049,36 @@ bool player::bulletvisible() {
 
 }
 
-bool player::bullet_hit() {
-	return bullethit;
+void player::bullet_hit(int key) {
+	cout << abs(laser_traj.x - StickyManOrigin.x) << "\n";
+	if (num_player == 2)
+	{
+		if (key == FSKEY_C && state == 2)
+		{
+			if (abs(laser_traj.x - StickyManOrigin.x) <= 40 && abs(laser_traj.y - StickyManOrigin.y) <= 85)
+			{
+				bullet_visible = false;
+				type_hit = 2;
+
+			}
+		}
+	}
+
+	if (num_player == 1)
+	{
+		if (key == FSKEY_M && state == 2)
+		{
+			if (abs(laser_traj.x - StickyManOrigin.x) <= 40 && abs(laser_traj.y - StickyManOrigin.y) <= 85)
+			{
+				bullet_visible = false;
+				type_hit = 2;
+
+			}
+		}
+	}
+
+
+	
 }
 
 int player::raisearm_x() {

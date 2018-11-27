@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <cmath>
 #include <math.h>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
@@ -75,12 +76,13 @@ private:
 
 
 	Coordinate laser_traj;
-	bool bullet_visible = false;
+	//bool bullet_visible = false;
 	bool bullethit = false; // determine whether hit by a character
 	Coordinate guntip;
 	Coordinate raisearm;
 
 public:
+	bool bullet_visible = false;
 	int judge = 0;
 	int judge_gun;
 	int state;							// State of the Player
@@ -110,6 +112,7 @@ public:
     void handleLife();							// Check the hit points left in time
     void checkIfDie(bool &terminate);           // Check if the player dies
 	Coordinate get_origin() { return StickyManOrigin; }
+	Coordinate get_origin_laser() { return laser_traj; }
 	void Jump(float dt);
 	void showText();
 
@@ -121,7 +124,7 @@ public:
 	void laser_move();
 	void bullet_init();
 	bool bulletvisible();						// return bullet visible status
-	bool bullet_hit();							// return whether bullet hit
+	void bullet_hit(int key);							// return whether bullet hit
 	int raisearm_x();							// arm position raised
 
 
