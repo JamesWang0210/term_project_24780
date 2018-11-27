@@ -6,7 +6,6 @@
 #include <math.h>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
-#include <vector>
 
 using namespace std;
 
@@ -51,14 +50,6 @@ struct knifeCoordinates {
 	int y_righthand;
 };
 
-struct lasers {
-	bool isvisible;
-	bool bullethit = false; // determine whether hit by a character
-	float x;
-	float y;
-};
-
-
 class player
 {
 private:
@@ -80,19 +71,11 @@ private:
     bool is_die = false;            // Whether the player die
 
 
-	//Coordinate laser_traj;
-	//bool bullet_visible = false;
-
+	Coordinate laser_traj;
+	bool bullet_visible = false;
+	bool bullethit = false; // determine whether hit by a character
 	Coordinate guntip;
 	Coordinate raisearm;
-
-	lasers b1;
-	lasers b2;
-	lasers b3;
-	lasers b4;
-	lasers b5;
-	lasers b6;
-	lasers bullets[6] = { b1,b2,b3,b4,b5,b6 };             // an array of laser data
 
 
 public:
@@ -125,19 +108,12 @@ public:
 	void raise_arm();
 	void knife_position();                      // ADD:draw the knife position
 	void laser_position();                      // ADD:draw the laser position
-
-	// * Laser processing * // 
-	void draw_lasers();
-	void process_lasers();
+	void draw_laser();
 	void laser_move();
-	void start_a_bullet();         // 
-	   bool bulletvisible();       // return bullet visible status
-	   bool bullet_hit();          // return whether bullet hit
+	void bullet_init();
+	bool bulletvisible();       // return bullet visible status
+	bool bullet_hit();          // return whether bullet hit
 	int raisearm_x();           // arm position raised
-	int bullets_on();           // the number of bullets that are on screen
-	void draw_reload();
-
-
 
 
 };
