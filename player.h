@@ -3,9 +3,11 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <cmath>
 #include <math.h>
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
+#include "yssimplesound.h"
 
 using namespace std;
 
@@ -33,56 +35,102 @@ struct StickyManCoordinates
 	int Y_LegLeft = 50;
 
 };
+
+struct knifeCoordinates {
+	int x_righthand_joint;                          // knife, supplementary corrdinates to stickman figure
+	int y_righthand_joint;
+	int x_lefthand_joint;
+	int y_lefthand_joint;
+	int x_knife_bottom;
+	int y_knife_bottom;
+	int x_knife_tip;
+	int y_knife_tip;
+	int x_knife_shield_l;
+	int y_knife_shield_l;
+	int x_knife_shield_r;
+	int y_knife_shield_r;
+
+	int x_lefthand;
+	int y_lefthand;
+	int x_righthand;
+	int y_righthand;
+};
+
 class player
 {
 private:
-	//int oriX, oriY, height, width;
-	//char *pixels;
+	knifeCoordinates knife;
 	Coordinate StickyManOrigin;
 	StickyManCoordinates SC;
+    
+    /* Life Variables */
+    static const int SIDEMAG = 3; 
+    
+    int life_tot;
+    
+    int lifeValue;                  // Original Hit Points that the Player has
+    int num_player = 1;             // # of the Player
+    double lifeX, lifeY;            // Position of Life Bar on the Window
+    double frame;
+    bool is_main;                   // Whether it is the main player
+    
+    bool is_die = false;            // Whether the player die
 
-	/* Life Variables */
-	static const int SIDEMAG = 3;
 
-	int life_tot;
+	Coordinate laser_traj;
+	//bool bullet_visible = false;
+	bool bullethit = false; // determine whether hit by a character
+	Coordinate guntip;
+	Coordinate raisearm;
 
-	int lifeValue;                  // Original Hit Points that the Player has
-	int num_player = 1;             // # of the Player
-	double lifeX, lifeY;            // Position of Life Bar on the Window
-	double frame;
-	bool is_main;                   // Whether it is the main player
-
-	bool is_die = false;            // Whether the player die
 public:
+	bool bullet_visible = false;
 	int judge = 0;
-	player(int x, int y, int lv, float lx, float ly, int num, bool main);
-	~player();
+	int judge_gun;
+	int state;							// State of the Player
+
+	bool InAir = FALSE;
+	bool downPressed = FALSE;
+	int type_hit = -1;
+
+	int punchPos = 0;
+	int kickPos = 0;
+
+	float v = 50;
+
+    player(int x, int y, int lv, float lx, float ly, int num, bool main);
 	void draw();
-	void create();
-	//void cleanUp();
-	//char getPixel(int x, int y) const;
-	void moveLeft();
-	void moveRight(); // change the origin coordinates, store the new leg coordinates/new config
+	void moveLeft(int speed);
+	void moveRight(int speed);							// change the origin coordinates, store the new leg coordinates/new config
 
-	void punch(int &punchPos); // store the new coordinates for the arm/new config
-	void kick(int &kickpos); // store the new coordinates for the leg/new config
-	//void stand(); // store the new coords for stand config
-	//void load(string fName); // load the config
-
-	bool getIfDie();                            // Get if die
-	void ifHit(int key, int &type_hit);         // Deice if hit
-
-	/* Life Methods */
-	void drawLife();                            // Draw the life bar
-	void handleLife(int &type_hit);             // Check the hit points left in time
-	void checkIfDie(bool &terminate);           // Check if the player dies
-	Coordinate getOrigin() { return StickyManOrigin; }
-	void Jump(float dt, float &v, bool &InAir);
+	void punch();								// store the new coordinates for the arm/new config
+	void kick();								// store the new coordinates for the leg/new config
+    
+    bool getIfDie();							// Get if die
+    void ifHit(int key, int state);						// Deice if hit
+    
+    /* Life Methods */
+    void drawLife();                            // Draw the life bar
+    void handleLife();							// Check the hit points left in time
+    void checkIfDie(bool &terminate);           // Check if the player dies
+	Coordinate get_origin() { return StickyManOrigin; }
+	Coordinate get_origin_laser() { return laser_traj; }
+	void Jump(float dt);
 	void showText();
 
-	void turn(int &punchPos);
-	void sit();
-	void sound();
+
+	void raise_arm();
+	void knife_position();                      // ADD:draw the knife position
+	void laser_position();                      // ADD:draw the laser position
+	void draw_laser();
+	void laser_move();
+	void bullet_init();
+	bool bulletvisible();						// return bullet visible status
+	void bullet_hit(int key);							// return whether bullet hit
+	int raisearm_x();							// arm position raised
+
+
 };
 
-void createBlood(Coordinate origin, int &BloodPos);
+//void createBlood(Coordinate origin,int &BloodPos);
+
