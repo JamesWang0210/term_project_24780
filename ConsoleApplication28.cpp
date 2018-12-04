@@ -18,9 +18,15 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		theMenu.drawScreen();
 		if (pveOrPvp)
+		{
 			theMenu.drawButtons(pveOrPvp, first, loopCount, pve, secondInput);
+			theMenu.instruction();
+		}
 		if (showButtons)
+		{
 			theMenu.drawButtons(pveOrPvp, first, loopCount, pve, secondInput);
+			theMenu.instruction();
+		}
 		key = FsInkey();
 
 		switch (key)
@@ -92,8 +98,8 @@ int main()
 	int flag = 0;
 	bool flag_last = false;
 
-	player p1(200, 450, 100, 50.0, 50.0, 1, true);
-	player p2(600, 450, 100, 450.0, 50.0, 2, false);
+	player p1(200, 450, 100, 50.0, 50.0, 1, true, 0.0, 0.0, 0.0);
+	player p2(600, 450, 100, 450.0, 50.0, 2, false, 128.0, 128.0, 255.0);
 	enemy e;
 	//    player *e1 = new player(600, 450, 10, 600.0, 50.0, 2, false);
 	Environment theEnvironment;
@@ -492,7 +498,7 @@ int main()
 			}
 		}
 		else {
-			e.e1 = new player(rand() % 100 + 500, 450, 50, 450.0, 50.0, 2, false);
+			e.e1 = new player(rand() % 100 + 500, 450, 50, 450.0, 50.0, 2, false, (rand() % 255), (rand() % 255), (rand() % 255));
 			e.is_die = false;
 		}
 

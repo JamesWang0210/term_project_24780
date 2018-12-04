@@ -67,6 +67,7 @@ private:
 	static const int SIDEMAG = 3;
 
 	int life_tot;
+	float r, g, b;
 
 	double lifeValue;                  // Original Hit Points that the Player has
 	int num_player = 1;             // # of the Player
@@ -102,7 +103,7 @@ public:
 
 	int BloodPos = 0;
 
-	player(int x, int y, double lv, double lx, double ly, int num, bool main);
+	player(int x, int y, double lv, double lx, double ly, int num, bool main, float r_in, float g_in, float b_in);
 	void draw();
 	void moveLeft(int speed);
 	void moveRight(int speed);                            // change the origin coordinates, store the new leg coordinates/new config
@@ -145,7 +146,7 @@ protected:
 
 public:
 	player* e1;
-	enemy() { e1 = new player(600, 450, 10, 600.0, 50.0, 2, false); }
+	enemy() { e1 = new player(600, 450, 10, 600.0, 50.0, 2, false, 64.0, 64.0, 128.0); }
 
-	bool is_die = false;                        // Deice if hit
+	bool is_die = false;                        // Decide if hit
 };

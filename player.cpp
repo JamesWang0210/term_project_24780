@@ -1,6 +1,6 @@
 #include "player.h"
 
-player::player(int x, int y, double lv, double lx, double ly, int num, bool main)
+player::player(int x, int y, double lv, double lx, double ly, int num, bool main, float r_in, float g_in, float b_in)
 {
 	StickyManOrigin.x = x;
 	StickyManOrigin.y = y;
@@ -30,6 +30,10 @@ player::player(int x, int y, double lv, double lx, double ly, int num, bool main
 	is_main = main;
 
 	state = 1;
+
+	r = r_in;
+	g = g_in;
+	b = b_in;
 }
 
 
@@ -61,7 +65,7 @@ void player::draw()
 		if (InAir == false)
 			StickyManOrigin.y = 450;
 		glLineWidth(10);
-		glColor3f(0.0, 0.0, 0);
+		glColor3ub(r, g, b);
 		glBegin(GL_LINES);
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
@@ -92,7 +96,7 @@ void player::draw()
 	{
 		float newYOrigin;
 		glLineWidth(10);
-		glColor3f(0.0, 0.0, 0);
+		glColor3ub(r, g, b);
 		SC.lenght = 40;
 
 		StickyManOrigin.y = 500;
@@ -127,7 +131,7 @@ void player::draw()
 		glEnd();
 
 	}
-	glColor3f(0, 0, 0);
+	glColor3ub(r, g, b);
 	drawCircle(StickyManOrigin, rad, true);
 }
 
@@ -532,7 +536,7 @@ void player::checkIfDie(bool &terminate, string playerName)
 void player::createBlood(Coordinate origin)
 {
 	glLineWidth(3);
-	glColor3f(255, 0, 0);
+	glColor3ub(255, 0, 0);
 	glBegin(GL_LINES);
 	glVertex2i(origin.x + 10 + BloodPos, origin.y - 8 - BloodPos);
 	glVertex2i(origin.x + 14 + BloodPos, origin.y - 12 - BloodPos);
@@ -570,7 +574,7 @@ void player::Jump(float dt)
 
 void player::showText()
 {
-	glColor3f(256, 0, 0);                            // Yellow as default
+	glColor3ub(256, 0, 0);                            // Yellow as default
 	glBegin(GL_QUADS);                                  // Rectangular Life Bar
 
 	glVertex2i(StickyManOrigin.x - 200, StickyManOrigin.y - 50);
@@ -591,7 +595,7 @@ void player::knife_position()
 	int rad = 20;
 
 	glLineWidth(15);
-	glColor3f(0.0, 0.0, 0);
+	glColor3ub(r, g, b);
 	glBegin(GL_LINES);
 
 	if (judge == 1) {
@@ -662,7 +666,7 @@ void player::knife_position()
 		}
 		glEnd();
 
-		glColor3f(0, 0, 0);
+		glColor3ub(r, g, b);
 		drawCircle(StickyManOrigin, rad, true);
 
 		//Draw knife
@@ -755,7 +759,7 @@ void player::knife_position()
 		}
 		glEnd();
 
-		glColor3f(0, 0, 0);
+		glColor3ub(r, g, b);
 		drawCircle(StickyManOrigin, rad, true);
 
 		//Draw knife
@@ -794,7 +798,7 @@ void player::laser_position() {
 				StickyManOrigin.y = 450;
 
 			glLineWidth(15);
-			glColor3f(0.0, 0.0, 0);
+			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
 			//body
@@ -825,7 +829,7 @@ void player::laser_position() {
 
 			glEnd();
 
-			glColor3f(0, 0, 0);
+			glColor3ub(r, g, b);
 			drawCircle(StickyManOrigin, rad, true);
 
 			//draw gun
@@ -867,7 +871,7 @@ void player::laser_position() {
 				StickyManOrigin.y = 450;
 
 			glLineWidth(15);
-			glColor3f(0.0, 0.0, 0);
+			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
 			//body
@@ -898,7 +902,7 @@ void player::laser_position() {
 
 			glEnd();
 
-			glColor3f(0, 0, 0);
+			glColor3ub(r, g, b);
 			drawCircle(StickyManOrigin, rad, true);
 
 			//draw gun
@@ -943,7 +947,7 @@ void player::laser_position() {
 			StickyManOrigin.y = 500;
 
 			glLineWidth(15);
-			glColor3f(0.0, 0.0, 0);
+			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
 			//body
@@ -978,7 +982,7 @@ void player::laser_position() {
 
 			glEnd();
 
-			glColor3f(0, 0, 0);
+			glColor3ub(r, g, b);
 			drawCircle(StickyManOrigin, rad, true);
 
 			//draw gun
@@ -1019,7 +1023,7 @@ void player::laser_position() {
 			StickyManOrigin.y = 500;
 
 			glLineWidth(15);
-			glColor3f(0.0, 0.0, 0);
+			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
 			//body
@@ -1054,7 +1058,7 @@ void player::laser_position() {
 
 			glEnd();
 
-			glColor3f(0, 0, 0);
+			glColor3ub(r, g, b);
 			drawCircle(StickyManOrigin, rad, true);
 
 			//draw gun
