@@ -1,12 +1,8 @@
 #include "player.h"
-
 #include "menu.h"
-
 #include "environment.h"
-#include "yspng.h"
 
-
-void drawPNG(int wid,int hei, GLuint texId) {
+void drawPNG(int wid, int hei, GLuint texId) {
 	glViewport(0, 0, wid, hei);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -39,576 +35,753 @@ void drawPNG(int wid,int hei, GLuint texId) {
 }
 
 int main()
-
 {
 	YsRawPngDecoder png[3];
 	png[0].Decode("boxer.png");
 	png[1].Decode("cartoongun.png");
 	png[2].Decode("knife.png");
 	bool terminateMenu = false, first = true, pve = true, secondInput = false;
-
 	bool pveOrPvp = true, showButtons = false, ready = true;
-
 	int key, pos = 0, loopCount = 0;
-
+	int prob = rand() % 50 + 1;
 	Menu theMenu(800, 600);
+
+	int num = 0;
+
+	GLuint texId[3];
 
 	FsOpenWindow(16, 16, 800, 600, 1);
 
-	// prepare PNG
-	GLuint texId[3];  // this will be use as texture identifiers for the two PNGs
-					  // glGenTextures(2,texId);  // You can also reserve two texture identifies with one call this way.
-	for (int i = 0;i < 3;i++) {
-		glGenTextures(1, &texId[i]);  // Reserve one texture identifier
-		glBindTexture(GL_TEXTURE_2D, texId[i]);  // Making the texture identifier current (or bring it to the deck)
-
-												 // set up parameters for the current texture
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		glTexImage2D
-		(GL_TEXTURE_2D,
-			0,    // Level of detail
-			GL_RGBA,
-			png[i].wid,
-			png[i].hei,
-			0,    // Border width, but not supported and needs to be 0.
-			GL_RGBA,
-			GL_UNSIGNED_BYTE,
-			png[i].rgba);
-	}
-
+	// =============================================MENU================================================
 	while (!terminateMenu)
-
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		theMenu.drawScreen();
-
 		if (pveOrPvp)
-
+		{
 			theMenu.drawButtons(pveOrPvp, first, loopCount, pve, secondInput);
-
+			theMenu.instruction();
+		}
 		if (showButtons)
-
+		{
 			theMenu.drawButtons(pveOrPvp, first, loopCount, pve, secondInput);
-
+			theMenu.instruction();
+		}
 		key = FsInkey();
 
 		switch (key)
-
 		{
-
 		case(FSKEY_ESC):
-
 			terminateMenu = true;
-
 			break;
-
 		case(FSKEY_UP): //change selected button if UP is hit
-
 			if (first)
-
 				first = false;
-
 			else
-
 				first = true;
-
 			break;
-
 		case(FSKEY_DOWN): //change selected button if DOWN is hit
-
 			if (first)
-
 				first = false;
-
 			else
-
 				first = true;
-
 			break;
-
 		case(FSKEY_ENTER): //move to next screen
-
 			if (pveOrPvp) {
-
 				if (first)
-
 					pve = true;
-
 				else
-
 					pve = false;
-
 				pveOrPvp = false;
-
 				showButtons = true;
-
 				first = true;
-
 			}
-
 			else
-
 				if (showButtons) {
-
 					showButtons = false;
-
 					break;
-
 				}
-
 			if (!showButtons && !pveOrPvp) {
-
 				if (first) {
-
 					theMenu.saveNickname(pos, secondInput, pve, terminateMenu);
-
 				}
-
 				else {
-
 					theMenu.loadNickname(pos, ready, secondInput, pve, terminateMenu);
-
 				}
-
 				if (pve == false && ready == true)
-
 					showButtons = true;
-
 			}
-
 		default:
-
 			if (!showButtons && !pveOrPvp) {
-
 				if (12 <= key && key <= 37 || key == 55) //maybe allow numbers
-
 					theMenu.insertLetter(pos, key);
-
 				theMenu.showNickname(loopCount, pos, ready, pve, secondInput);
-
 			}
-
 		}
 
-
-
 		FsPollDevice();
-
 		FsSleep(20);
-
 		FsSwapBuffers();
-
 		loopCount += 1;
-
 		if (loopCount == 50)
-
 			loopCount = 0;
-
 	}
 
-
-
 	bool terminate = false;
-
 	string playerName;
-
 	bool InAction1 = false;
-
 	bool InAction2 = false;
-
 	bool Cpressed = false;
-
 	bool Mpressed = false;
-
 	//Coordinate origin;
+	//int BloodPos = 0;
+	int flag = 0;
+	bool flag_last = false;
 
-	//int BloodPos = 0;  
-
-
-
-	player p1(200, 450, 100, 50.0, 50.0, 1, true);
-
-	player p2(600, 450, 100, 450.0, 50.0, 2, true);
-
+	player p1(200, 450, 100, 50.0, 50.0, 1, true, 0.0, 0.0, 0.0);
+	player p2(600, 450, 100, 450.0, 50.0, 2, false, 128.0, 128.0, 255.0);
+	enemy e;
+	//    player *e1 = new player(600, 450, 10, 600.0, 50.0, 2, false);
 	Environment theEnvironment;
-
-	YsSoundPlayer player;
-
+	YsSoundPlayer sound;
 	YsSoundPlayer::SoundData heartbeat;
 
-
-
 	YsSoundPlayer::SoundData punch;
-
 	YsSoundPlayer::SoundData kick;
-
 	YsSoundPlayer::SoundData shoot;
-
 	YsSoundPlayer::SoundData knife;
 
 
 	punch.LoadWav("punch.wav");
-
 	kick.LoadWav("kick.wav");
-
 	shoot.LoadWav("shoot.wav");
-
 	knife.LoadWav("knife.wav");
 
-	player.Start();
+	sound.Start();
 
-	while (!terminate)
-
+	// ========================================SINGLEPLAYER============================================
+	while (!terminate && pve)
 	{
-
 		FsPollDevice();
-
 		key = FsInkey();
 
-
 		if (FSKEY_ESC == key)
-
 			terminate = true;
-
-
 
 		/* Player I*/
 
-
-
-		if (GetKeyState('D') < 0)
-
+		if (key == FSKEY_D)
 		{
-
-			p1.moveRight(10);
-
+			p1.moveRight(20);
 			p1.judge = 1;
-
 		}
 
-
-
-		if (GetKeyState('A') < 0)
-
+		if (key == FSKEY_A)
 		{
-
-			p1.moveLeft(10);
-
+			p1.moveLeft(20);
 			p1.judge = 0;
-
 		}
-
-
-
 
 
 		if (key == FSKEY_Z || p1.punchPos != 0)
-
 		{
-
 			if (p1.state != 2)
+			{
+				if (p1.state == 1) {
+					p1.punch();
+					//sound.PlayBackground(punch, true);
+				}
+				else if (p1.state == 3) {
+					p1.stab();
+					//sound.PlayBackground(knife, true);
+				}
+			}
+		}
 
+		if (key == FSKEY_X || p1.kickPos != 0)
+		{
+			if (p1.downPressed == false)
+				//sound.PlayBackground(kick, true);
+			{
+				p1.kick();
+			}
+
+		}
+		if (key == FSKEY_T)
+			p1.showText();
+
+		if (key == FSKEY_W || p1.InAir == true)
+		{
+			p1.Jump(0.5);
+		}
+
+		if (key == FSKEY_C)
+		{
+			p1.bullet_init();
+			p1.raise_arm();
+			if (sound.IsPlaying(shoot) == 1)
+			{
+				sound.Stop(shoot);
+			}
+			if (p1.state == 2)
+				//sound.PlayBackground(shoot, true);
 			{
 
+			}
+		}
+
+		if (key == FSKEY_1) {            // differentiating states
+			p1.state = 1;
+		}
+
+		if (key == FSKEY_2) {
+			p1.state = 2;
+		}
+
+		if (key == FSKEY_3) {
+			p1.state = 3;
+		}
+
+		if (p1.raisearm_x() != 0) {        // animation for moving arm up
+			p1.raise_arm();
+		}
+
+		if (key == FSKEY_S)
+			p1.downPressed = true;
+		else
+			p1.downPressed = false;
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		theEnvironment.draw();
+
+		if (e.e1->getIfDie())
+		{
+			if (e.e1 != nullptr) {
+				delete[] e.e1;
+				e.e1 = nullptr;
+				e.is_die = true;
+				num += 1;
+			}
+			else {
+				//
+			}
+		}
+
+		if (!p1.getIfDie()) {
+			if (p1.state == 1)              // default standing position
+				p1.draw();
+			else if (p1.state == 2) {       // use shooter position
+				p1.laser_position();
+				p1.draw_laser();
+				p1.laser_move();
+			}
+			else if (p1.state == 3) {       // use knife position
+				p1.knife_position();
+			}
+			/* Life Part */
+			p1.drawLife();
+		}
+
+		if (!e.is_die) {
+			//            p1.stand();
+			if (e.e1->state == 1)              // default standing position
+				e.e1->draw();
+			else if (e.e1->state == 2) {       // use shooter position
+				e.e1->laser_position();
+				e.e1->draw_laser();
+				e.e1->laser_move();
+			}
+			else if (e.e1->state == 3) {       // use knife position
+				e.e1->knife_position();
+			}
+			/* Life Part */
+			e.e1->drawLife();
+
+			// Boss following control
+			if (p1.get_origin().x - e.e1->get_origin().x > 100) // p1 is on the right, boss will follow and move to the right
+			{
+				e.e1->moveRight(5);
+				e.e1->judge = 1;
+			}
+
+			if (p1.get_origin().x - e.e1->get_origin().x < -100) // p1 is on the left, boss will follow and move to the left
+			{
+				e.e1->moveLeft(5);
+				e.e1->judge = 0;
+			}
+
+			// Boss fighting control
+
+			if (80 <= flag)
+				flag_last = true;
+
+			if (p1.get_origin().x - e.e1->get_origin().x <= 100 && p1.get_origin().x - e.e1->get_origin().x >= 0 && abs(p1.get_origin().y - e.e1->get_origin().y) < 100)// p1 is on the right
+			{	
+				if (double(prob) / 50 < 0.4  ) // boss punch
+				{
+					// Punch
+					if (e.e1->punchPos != 0 || flag_last) {
+						e.e1->punch();
+						// Kick
+						key = 66;
+					}
+
+					if (flag >= 100) {
+						flag = 0;
+						flag_last = false;
+						prob = rand() % 50 + 1;
+						e.e1->draw();
+					}
+
+					
+					//sound.PlayBackground(punch, true);
+
+
+					if (e.e1->judge == 1) // e1 is facing right
+					{
+						p1.ifHit(key, e.e1->state);
+						if (e.e1->state == 1)
+						{
+							p1.moveRight(5);
+						}
+						else if (e.e1->state == 2)
+						{
+							p1.moveRight(15);
+						}
+
+						p1.handleLife();
+						p1.checkIfDie(terminate, "left");
+
+						e.e1->handleLife();
+						e.e1->checkIfDie(terminate, "right");
+
+						p1.createBlood(p1.get_origin());
+					}
+				}
+
+				if (double(prob) / 50 >= 0.4 ) // boss kick
+				{
+					if (flag_last || e.e1->kickPos != 0) {
+						e.e1->kick();
+						// Kick
+						key = 78;
+					}
+						
+
+					if (flag >= 100) {
+						flag = 0;
+						flag_last = false;
+						prob = rand() % 50 + 1;
+						e.e1->draw();
+					}
+
+					// Kick
+					
+					//if (e.e1->downPressed == false)
+						//sound.PlayBackground(kick, true);
+
+					if (e.e1->judge == 1) // e1 is facing right
+					{
+						p1.ifHit(key, e.e1->state);
+						if (e.e1->state == 1)
+						{
+							p1.moveRight(5);
+						}
+						
+						if (e.e1->state == 2)
+						{
+							p1.moveRight(15);
+						}
+
+						p1.handleLife();
+						p1.checkIfDie(terminate, "left");
+
+						e.e1->handleLife();
+						e.e1->checkIfDie(terminate, "right");
+
+						p1.createBlood(p1.get_origin());
+					}
+				}
+
+				if (key == FSKEY_Z || key == FSKEY_X)
+				{
+					if (p1.judge == 0) // p1 is facing left
+					{
+						e.e1->ifHit(key, p1.state);
+						if (p1.state == 1)
+						{
+							e.e1->moveLeft(60);
+						}
+						
+						if (p1.state == 2)
+						{
+							e.e1->moveLeft(80);
+						}
+
+						p1.handleLife();
+						p1.checkIfDie(terminate, "left");
+
+						e.e1->handleLife();
+						e.e1->checkIfDie(terminate, "right");
+
+						e.e1->createBlood(e.e1->get_origin());
+					}
+				}
+			}
+			else if (p1.get_origin().x - e.e1->get_origin().x >= -100 && p1.get_origin().x - e.e1->get_origin().x <= 0 && abs(p1.get_origin().y - e.e1->get_origin().y) < 100)// p1 is on the left
+			{
+				if (double(prob) / 50 < 0.4 )// boss punch
+				{
+					// Punch
+					if (flag_last || e.e1->punchPos != 0) {
+						e.e1->punch();
+						// Kick
+						key = 66;
+					}
+
+					if (flag >= 100) {
+						flag = 0;
+						flag_last = false;
+						prob = rand() % 50 + 1;
+						e.e1->draw();
+					}
+
+					
+					//sound.PlayBackground(punch, true);
+
+
+					if (e.e1->judge == 0) // e1 is facing left
+					{
+						p1.ifHit(key, e.e1->state);
+						if (e.e1->state == 1)
+						{
+							p1.moveLeft(5);
+						}
+
+						if (e.e1->state == 2)
+						{
+							p1.moveLeft(15);
+						}
+
+						p1.handleLife();
+						p1.checkIfDie(terminate, "left");
+
+						e.e1->handleLife();
+						e.e1->checkIfDie(terminate, "right");
+
+						p1.createBlood(p1.get_origin());
+					}
+				}
+
+				if (double(prob) / 50 >= 0.4) // boss kick
+				{
+					// Kick
+					if (flag_last || e.e1->kickPos != 0) {
+						e.e1->punch();
+						// Kick
+						key = 78;
+					}
+
+					if (flag >= 100) {
+						flag = 0;
+						flag_last = false;
+						prob = rand() % 50 + 1;
+						e.e1->draw();
+					}
+
+					
+					//if (e.e1->downPressed == false)
+						//sound.PlayBackground(kick, true);
+
+					
+					if (e.e1->judge == 0) // e1 is facing left
+					{
+						p1.ifHit(key, e.e1->state);
+						if (e.e1->state == 1)
+						{
+							p1.moveLeft(5);
+						}
+						
+						if (e.e1->state == 2)
+						{
+							p1.moveLeft(15);
+						}
+						p1.handleLife();
+						p1.checkIfDie(terminate, "left");
+
+						e.e1->handleLife();
+						e.e1->checkIfDie(terminate, "right");
+
+						p1.createBlood(p1.get_origin());
+					}
+				}
+
+				if (key == FSKEY_Z || key == FSKEY_X)
+				{
+					if (p1.judge == 1) // p1 is facing right
+					{
+						e.e1->ifHit(key, p1.state);
+						if (p1.state == 1)
+						{
+							e.e1->moveRight(60);
+						}
+						
+						if (p1.state == 1)
+						{
+							e.e1->moveRight(80);
+						}
+
+						p1.handleLife();
+						p1.checkIfDie(terminate, "left");
+
+						e.e1->handleLife();
+						e.e1->checkIfDie(terminate, "right");
+
+						e.e1->createBlood(e.e1->get_origin());
+					}
+				}
+			}
+			else
+			{
+				if (key == FSKEY_C || Cpressed)
+				{
+
+					Cpressed = true;
+					int xMin = e.e1->get_origin().x - 10;
+					int xMax = e.e1->get_origin().x + 10;
+					int yMin = e.e1->get_origin().y - 10;
+					int yMax = e.e1->get_origin().y + 90;
+					if ((p1.get_origin_laser().x - xMin) >= 0 && (p1.get_origin_laser().x - xMax) <= 0
+						&& (p1.get_origin_laser().y - yMin) >= 0 && (p1.get_origin_laser().y - yMax) <= 0)
+					{
+						p1.bullet_visible = false;
+						e.e1->type_hit = 2;
+						e.e1->createBlood(e.e1->get_origin());
+						Cpressed = false;
+					}
+				}
+				p1.handleLife();
+				playerName = "left";
+				p1.checkIfDie(terminate, playerName);
+
+				if (key == FSKEY_M || Mpressed)
+				{
+					Mpressed = true;
+					int xMin = p1.get_origin().x - 10;
+					int xMax = p1.get_origin().x + 10;
+					int yMin = p1.get_origin().y - 10;
+					int yMax = p1.get_origin().y + 90;
+					if ((e.e1->get_origin_laser().x - xMin) >= 0 && (e.e1->get_origin_laser().x - xMax) <= 0
+						&& (e.e1->get_origin_laser().y - yMin) >= 0 && (e.e1->get_origin_laser().y - yMax) <= 0)
+					{
+						e.e1->bullet_visible = false;
+						p1.type_hit = 2;
+						p1.createBlood(p1.get_origin());
+						Mpressed = false;
+					}
+				}
+				e.e1->handleLife();
+				playerName = "right";
+				e.e1->checkIfDie(terminate, playerName);
+			}
+		}
+		else {
+			e.e1 = new player((rand() % 100 + 500), 450, (rand() % 50 + 1), 450.0, 50.0, 2, false, (rand() % 255), (rand() % 255), (rand() % 255));
+			e.is_die = false;
+		}
+
+		// Check if Win
+		p1.checkIfWin(terminate, num);
+
+		FsSleep(30);
+		FsSwapBuffers();
+
+		flag++;
+	}
+
+	// =======================================Multiplayer===============================================
+
+	while (!terminate && !pve)
+	{
+
+		FsPollDevice();
+		key = FsInkey();
+
+		if (FSKEY_ESC == key)
+		{
+			terminate = true;
+		}
+
+		/* Player I*/
+
+		if (GetKeyState('D') < 0)
+		{
+			p1.moveRight(10);
+			p1.judge = 1;
+		}
+
+		if (GetKeyState('A') < 0)
+		{
+			p1.moveLeft(10);
+			p1.judge = 0;
+		}
+
+		if (key == FSKEY_Z || p1.punchPos != 0)
+		{
+			if (p1.state != 2)
+			{
 				if (p1.state == 1) {
-
-					p1.punch(InAction1, InAction2);
-
-					player.PlayBackground(punch, true);
-
+					p1.punch();
+					//player.PlayBackground(punch, true);
 				}
 
 				else if (p1.state == 3) {
-
 					p1.stab();
-
-					player.PlayBackground(knife, true);
-
+					//player.PlayBackground(knife, true);
 				}
-
 			}
-
 		}
 
-
-
 		if (key == FSKEY_X || p1.kickPos != 0)
-
 		{
-
-			p1.kick();
-
+			
 			if (p1.downPressed == FALSE)
-
-				player.PlayBackground(kick, true);
-
-
-
+			{
+				p1.kick();
+				//player.PlayBackground(kick, true);
+			}			
 		}
 
 		if (key == FSKEY_T)
-
 			p1.showText();
 
-
-
-		//if (key == FSKEY_B || BloodPos != 0)
-
-		//{
-
-		//	origin = p1.get_origin();
-
-		//	createBlood(origin, BloodPos);
-
-		//}
-
-
-
 		if (key == FSKEY_W || p1.InAir == TRUE)
-
 		{
-
 			p1.Jump(0.5);
-
 		}
-
-
 
 		if (key == FSKEY_C)
-
 		{
-
 			p1.bullet_init();
-
 			p1.raise_arm();
+			//if (player.IsPlaying(shoot) == 1)
+			//{
+			//	player.Stop(shoot);
+			//}
 
-			if (player.IsPlaying(shoot) == 1)
-
-			{
-
-				player.Stop(shoot);
-
-				//cout << "yyyyyyyyyyyyyyyyyyyyyyy" << endl;
-
-			}
-
-			if (p1.state == 2)
-
-				player.PlayBackground(shoot, true);
+			//if (p1.state == 2)
+			//	player.PlayBackground(shoot, true);
 
 		}
-
-
 
 		if (key == FSKEY_1) {            // differentiating states
-
 			p1.state = 1;
-
 		}
 
-
-
-		if (key == FSKEY_2) {
-
+		if (key == FSKEY_2) 
+		{
 			p1.state = 2;
-
 		}
 
-
-
-		if (key == FSKEY_3) {
-
+		if (key == FSKEY_3) 
+		{
 			p1.state = 3;
-
 		}
-
-
 
 		if (p1.raisearm_x() != 0) {        // animation for moving arm up
-
 			p1.raise_arm();
-
 		}
-
-
 
 		if (GetKeyState('S') < 0)
-
 			p1.downPressed = TRUE;
-
 		else
-
 			p1.downPressed = FALSE;
 
-
-
 		/* Player II*/
-
 		if (GetKeyState('L') < 0)
-
 		{
-
 			p2.moveRight(10);
-
 			p2.judge = 1;
-
 		}
-
-
 
 		if (GetKeyState('J') < 0)
-
 		{
-
 			p2.moveLeft(10);
-
 			p2.judge = 0;
-
 		}
 
-
-
 		if (key == FSKEY_B || p2.punchPos != 0)
-
 		{
-
 			if (p2.state != 2)
-
 			{
-
 				if (p2.state == 1) {
-
-					p2.punch(InAction1, InAction2);
-
-					player.PlayBackground(punch, true);
-
+					p2.punch();
+					//player.PlayBackground(punch, true);
 				}
 
 				else if (p2.state == 3) {
-
 					p2.stab();
-
-					player.PlayBackground(knife, true);
-
+					//player.PlayBackground(knife, true);
 				}
-
 			}
-
 		}
 
-
-
 		if (key == FSKEY_N || p2.kickPos != 0)
-
 		{
-
-			p2.kick();
-
+			
 			if (p2.downPressed == FALSE)
-
-				player.PlayBackground(kick, true);
-
-
-
+			{
+				p2.kick();
+				//player.PlayBackground(kick, true);
+			}
 		}
 
 		if (key == FSKEY_Y)
-
 			p2.showText();
 
-
-
-		//if (key == FSKEY_B || BloodPos != 0)
-
-		//{
-
-		//	origin = p1.get_origin();
-
-		//	createBlood(origin, BloodPos);
-
-		//}
-
-
-
 		if (key == FSKEY_I || p2.InAir == TRUE)
-
 		{
-
 			p2.Jump(0.5);
-
 		}
-
-
 
 		if (key == FSKEY_M)
-
 		{
-
 			p2.bullet_init();
-
 			p2.raise_arm();
+			//if (player.IsPlaying(shoot) == 1)
 
-			if (player.IsPlaying(shoot) == 1)
+			//{
 
-			{
+			//	player.Stop(shoot);
 
-				player.Stop(shoot);
+			//	//cout << "yyyyyyyyyyyyyyyyyyyyyyy" << endl;
 
-				//cout << "yyyyyyyyyyyyyyyyyyyyyyy" << endl;
-
-			}
-
+			//}
 			if (p2.state == 2)
-
-				player.PlayBackground(shoot, true);
-
+			{
+				//player.PlayBackground(shoot, true);
+			}
 		}
-
-
 
 		if (key == FSKEY_7) {            // differentiating states
-
 			p2.state = 1;
-
 		}
-
-
 
 		if (key == FSKEY_8) {
-
 			p2.state = 2;
-
 		}
-
-
 
 		if (key == FSKEY_9) {
-
 			p2.state = 3;
-
 		}
-
-
 
 		if (p2.raisearm_x() != 0) {        // animation for moving arm up
-
 			p2.raise_arm();
-
 		}
 
-
-
 		if (GetKeyState('K') < 0)
-
 			p2.downPressed = TRUE;
-
 		else
-
 			p2.downPressed = FALSE;
 
 		int wid, hei;
@@ -639,9 +812,9 @@ int main()
 			glTexCoord2d(1.0, 0.0);
 			glVertex2i(50 + size, 80);
 			glTexCoord2d(1.0, 1.0);
-			glVertex2i(50+size, 80+size);
+			glVertex2i(50 + size, 80 + size);
 			glTexCoord2d(0.0, 1.0);
-			glVertex2i(50, 80+size);
+			glVertex2i(50, 80 + size);
 			glEnd();
 			break;
 		case(2):
@@ -725,361 +898,185 @@ int main()
 
 
 		if (!p1.getIfDie()) {
-
 			//            p1.stand();
-
 			if (p1.state == 1)              // default standing position
-
 				p1.draw();
 
 			else if (p1.state == 2) {       // use shooter position
-
 				p1.laser_position();
-
 				p1.draw_laser();
-
 				p1.laser_move();
-
 			}
 
 			else if (p1.state == 3) {       // use knife position
-
 				p1.knife_position();
-
 			}
 
-
-
-
-
 			/* Life Part */
-
 			p1.drawLife();
-
-
-
 		}
 
-
-
 		if (!p2.getIfDie()) {
-
 			//            p1.stand();
-
 			if (p2.state == 1)              // default standing position
-
 				p2.draw();
 
 			else if (p2.state == 2) {       // use shooter position
-
 				p2.laser_position();
-
 				p2.draw_laser();
-
 				p2.laser_move();
-
 			}
 
 			else if (p2.state == 3) {       // use knife position
-
 				p2.knife_position();
-
 			}
-
-
-
-
 
 			/* Life Part */
-
 			p2.drawLife();
-
-
-
-
-
 		}
 
-
-
-		/*if (abs(p1.get_origin().x - p2.get_origin().x) <= 100)
-
+		if (p1.get_origin().x - p2.get_origin().x <= 100 && p1.get_origin().x - p2.get_origin().x >= 0 && abs(p1.get_origin().y - p2.get_origin().y) < 100)// p1 is on the right
 		{
-
-		p1.ifHit(key);
-
-		p1.handleLife();
-
-		playerName = "left";
-
-		p1.checkIfDie(terminate, playerName);
-
-
-
-		p2.ifHit(key);
-
-		p2.handleLife();
-
-		playerName = "right";
-
-		p2.checkIfDie(terminate, playerName);
-
-		}*/
-
-		if (p1.get_origin().x - p2.get_origin().x <= 100 && p1.get_origin().x - p2.get_origin().x >= 0)// p1 is on the right
-
-		{
-
 			if (key == FSKEY_B || key == FSKEY_N)
-
 			{
-
 				if (p2.judge == 1) // p2 is facing right
-
 				{
-
 					p1.ifHit(key, p2.state);
-
-					p1.moveRight(5);
-
-
+					if (p2.state == 1)
+					{
+						p1.moveRight(5);
+					}
+					
+					if (p2.state == 2)
+					{
+						p1.moveRight(10);
+					}
 
 					p1.handleLife();
-
 					p1.checkIfDie(terminate, "left");
-
-
-
 					p2.handleLife();
-
 					p2.checkIfDie(terminate, "right");
-
-
-
 					p1.createBlood(p1.get_origin());
-
 				}
-
 			}
 
-
-
 			if (key == FSKEY_Z || key == FSKEY_X)
-
 			{
-
 				if (p1.judge == 0) // p1 is facing left
-
 				{
-
 					p2.ifHit(key, p1.state);
+					if (p1.state == 1)
+					{
+						p2.moveLeft(5);
+					}
 
-					p2.moveLeft(5);
-
-
-
-
-
+					if (p1.state == 2)
+					{
+						p2.moveLeft(10);
+					}
+					
 					p1.handleLife();
-
 					p1.checkIfDie(terminate, "left");
-
-
-
 					p2.handleLife();
-
 					p2.checkIfDie(terminate, "right");
-
-
-
 					p2.createBlood(p2.get_origin());
-
 				}
-
 			}
-
-
-
-
-
 		}
 
-		else if (p1.get_origin().x - p2.get_origin().x >= -100 && p1.get_origin().x - p2.get_origin().x <= 0)// p1 is on the left
-
+		else if (p1.get_origin().x - p2.get_origin().x >= -100 && p1.get_origin().x - p2.get_origin().x <= 0 && abs(p1.get_origin().y - p2.get_origin().y) < 100)// p1 is on the left
 		{
-
 			if (key == FSKEY_B || key == FSKEY_N)
-
 			{
-
 				if (p2.judge == 0) // p2 is facing right
-
 				{
-
 					p1.ifHit(key, p2.state);
-
-					p1.moveLeft(5);
-
-
-
+					if (p2.state == 1)
+					{
+						p1.moveLeft(5);
+					}
+					else if (p2.state == 2)
+					{
+						p1.moveLeft(10);
+					}					
 					p1.handleLife();
-
 					p1.checkIfDie(terminate, "left");
-
-
-
 					p2.handleLife();
-
 					p2.checkIfDie(terminate, "right");
-
-
-
 					p1.createBlood(p1.get_origin());
-
 				}
-
 			}
-
-
 
 			if (key == FSKEY_Z || key == FSKEY_X)
-
 			{
-
 				if (p1.judge == 1) // p1 is facing left
-
 				{
-
 					p2.ifHit(key, p1.state);
-
-					p2.moveRight(5);
-
-
-
-
-
+					if (p1.state == 1)
+					{
+						p2.moveRight(5);
+					}
+					
+					else if (p1.state == 2)
+					{
+						p2.moveRight(10);
+					}
 					p1.handleLife();
-
 					p1.checkIfDie(terminate, "left");
-
-
-
 					p2.handleLife();
-
 					p2.checkIfDie(terminate, "right");
-
-
-
 					p2.createBlood(p2.get_origin());
-
 				}
 
 			}
 
-
-
 		}
-
 		else
-
 		{
-
-			//cout << abs(p1.get_origin_laser().y - p2.get_origin().y) << "\n";
-
-			//cout << p2.type_hit << "\n";
-
-
-
 			if (key == FSKEY_C || Cpressed)
-
 			{
-
-
-
 				Cpressed = true;
-
 				int xMin = p2.get_origin().x - 10;
-
 				int xMax = p2.get_origin().x + 10;
-
 				int yMin = p2.get_origin().y - 10;
-
 				int yMax = p2.get_origin().y + 90;
-
 				if ((p1.get_origin_laser().x - xMin) >= 0 && (p1.get_origin_laser().x - xMax) <= 0
-
 					&& (p1.get_origin_laser().y - yMin) >= 0 && (p1.get_origin_laser().y - yMax) <= 0)
-
 				{
-
 					p1.bullet_visible = false;
-
 					p2.type_hit = 2;
-
 					p2.createBlood(p2.get_origin());
-
 					Cpressed = false;
-
 				}
-
 			}
 
 			p1.handleLife();
-
 			playerName = "left";
-
 			p1.checkIfDie(terminate, playerName);
 
-
-
 			if (key == FSKEY_M || Mpressed)
-
 			{
-
 				Mpressed = true;
-
 				int xMin = p1.get_origin().x - 10;
-
 				int xMax = p1.get_origin().x + 10;
-
 				int yMin = p1.get_origin().y - 10;
-
 				int yMax = p1.get_origin().y + 90;
-
 				if ((p2.get_origin_laser().x - xMin) >= 0 && (p2.get_origin_laser().x - xMax) <= 0
-
 					&& (p2.get_origin_laser().y - yMin) >= 0 && (p2.get_origin_laser().y - yMax) <= 0)
-
 				{
-
 					p2.bullet_visible = false;
-
 					p1.type_hit = 2;
-
 					p1.createBlood(p1.get_origin());
-
 					Mpressed = false;
-
 				}
-
 			}
-
 			p2.handleLife();
-
 			playerName = "right";
-
 			p2.checkIfDie(terminate, playerName);
-
 		}
 
-
-
 		FsSleep(20);
-
 		FsSwapBuffers();
-
 	}
-
-
-
+	return 0;
 }

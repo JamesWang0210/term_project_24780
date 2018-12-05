@@ -1,6 +1,6 @@
 #include "player.h"
 
-player::player(int x, int y, int lv, float lx, float ly, int num, bool main)
+player::player(int x, int y, double lv, double lx, double ly, int num, bool main, float r_in, float g_in, float b_in)
 {
 	StickyManOrigin.x = x;
 	StickyManOrigin.y = y;
@@ -9,27 +9,31 @@ player::player(int x, int y, int lv, float lx, float ly, int num, bool main)
 	SC.Y_RightHandJoint_length = 15;
 	SC.X_LeftHandJoint_length = 20;
 	SC.Y_LeftHandJoint_length = 15;
-	SC.X_LeftHandJoint_length2= 20;
-	SC.Y_LeftHandJoint_length2= 15;
+	SC.X_LeftHandJoint_length2 = 20;
+	SC.Y_LeftHandJoint_length2 = 15;
 	SC.X_RightHandJoint_length2 = 20;
 	SC.Y_RightHandJoint_length2 = 15;
 	SC.X_LeftLeg = 30;
 	SC.X_RightLeg = 30;
 	SC.Y_LegRight = 50;
 	SC.Y_LegLeft = 50;
-    
-    /* Life Part */
-    lifeValue = lv;
-    lifeX = lx;
-    lifeY = ly;
-    frame = lv;
-    
-    life_tot = lv;
-    
-    num_player = num;
-    is_main = main;
+
+	/* Life Part */
+	lifeValue = lv;
+	lifeX = lx;
+	lifeY = ly;
+	frame = lv;
+
+	life_tot = lv;
+
+	num_player = num;
+	is_main = main;
 
 	state = 1;
+
+	r = r_in;
+	g = g_in;
+	b = b_in;
 }
 
 
@@ -53,15 +57,15 @@ void drawCircle(Coordinate origin, int rad, bool fill)
 }
 
 void player::draw()
-{	
+{
 	int rad = 20;
-	if (downPressed == FALSE)
+	if (downPressed == false)
 	{
 		SC.lenght = 80;
-		if(InAir==FALSE)
+		if (InAir == false)
 			StickyManOrigin.y = 450;
 		glLineWidth(10);
-		glColor3f(0.0, 0.0, 0);
+		glColor3ub(r, g, b);
 		glBegin(GL_LINES);
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
@@ -87,12 +91,12 @@ void player::draw()
 
 		glEnd();
 	}
-	
+
 	else
 	{
 		float newYOrigin;
 		glLineWidth(10);
-		glColor3f(0.0, 0.0, 0);
+		glColor3ub(r, g, b);
 		SC.lenght = 40;
 
 		StickyManOrigin.y = 500;
@@ -127,13 +131,13 @@ void player::draw()
 		glEnd();
 
 	}
-    glColor3f(0, 0, 0);
-    drawCircle(StickyManOrigin, rad, true);
+	glColor3ub(r, g, b);
+	drawCircle(StickyManOrigin, rad, true);
 }
 
 void player::moveLeft(int speed)
 {
-	StickyManOrigin.x-= speed;
+	StickyManOrigin.x -= speed;
 	if (StickyManOrigin.x < 30)
 		StickyManOrigin.x = 30;
 	if (SC.X_RightLeg == 30)
@@ -167,24 +171,27 @@ void player::moveRight(int speed)
 
 void player::kick()
 {
-	//SC.X_RightLeg = 30 + kickpos;
-	//SC.Y_LegRight = 50 - kickpos;
-	//kickpos += 5;
-	//if (kickpos == 50)
-	//{
-	//	kickpos = 0;
-	//	SC.X_RightLeg = 30;
-	//	SC.Y_LegRight = 50;
-	//}
-
 	if (judge == 1)
 	{
-		SC.X_RightLeg = 30 + kickPos;
-		SC.Y_LegRight = 50 - kickPos;
-		kickPos += 5;
+		if (InAction2_kick == true)
+		{
+			InAction2_kick = false;
+			SC.X_RightLeg = 30 + kickPos;
+			SC.Y_LegRight = 50 - kickPos;
+		}
+		else {
+			InAction1_kick = true;
+			SC.X_RightLeg = 30 + kickPos;
+			SC.Y_LegRight = 50 - kickPos;
+			kickPos += 5;
+		}
+		SC.X_LeftLeg = 30;
+		SC.Y_LegLeft = 50;
+
 		if (kickPos == 50)
 		{
 			kickPos = 0;
+			InAction1_kick = false;
 			SC.X_RightLeg = 30;
 			SC.Y_LegRight = 50;
 		}
@@ -192,39 +199,52 @@ void player::kick()
 
 	if (judge == 0)
 	{
-		SC.X_LeftLeg = 30 + kickPos;
-		SC.Y_LegLeft = 50 - kickPos;
-		kickPos += 5;
+		if (InAction1_kick == true)
+		{
+			InAction1_kick = false;
+			SC.X_LeftLeg = 30 + kickPos;
+			SC.Y_LegLeft = 50 - kickPos;
+		}
+		else {
+			InAction2_kick = true;
+			SC.X_LeftLeg = 30 + kickPos;
+			SC.Y_LegLeft = 50 - kickPos;
+			kickPos += 5;
+		}
+		SC.X_RightLeg = 30;
+		SC.Y_LegRight = 50;
+
 		if (kickPos == 50)
 		{
 			kickPos = 0;
+			InAction2_kick = false;
 			SC.X_LeftLeg = 30;
 			SC.Y_LegLeft = 50;
 		}
 	}
 }
 
-void player::punch(bool &InAction1,bool &InAction2)
+void player::punch()
 {
 	/*SC.X_RightHandJoint_length = 40+punchPos;
-	SC.Y_RightHandJoint_length = 30-punchPos;
-	SC.X_LeftHandJoint_length2 = 20 -punchPos;
-	SC.Y_LeftHandJoint_length2= 15+ punchPos;
-	punchPos += 3;
-	if (punchPos == 30)
-	{
-		punchPos = 0;
-		SC.X_RightHandJoint_length = 40;
-		SC.Y_RightHandJoint_length = 30;
-		SC.X_LeftHandJoint_length2 = 20 ;
-		SC.Y_LeftHandJoint_length2 = 15 ;
-	}*/
+	 SC.Y_RightHandJoint_length = 30-punchPos;
+	 SC.X_LeftHandJoint_length2 = 20 -punchPos;
+	 SC.Y_LeftHandJoint_length2= 15+ punchPos;
+	 punchPos += 3;
+	 if (punchPos == 30)
+	 {
+	 punchPos = 0;
+	 SC.X_RightHandJoint_length = 40;
+	 SC.Y_RightHandJoint_length = 30;
+	 SC.X_LeftHandJoint_length2 = 20 ;
+	 SC.Y_LeftHandJoint_length2 = 15 ;
+	 }*/
 	if (judge == 1)
 	{
-		cout << "action1=" << InAction1 << endl;
+		//        cout << "action1=" << InAction1 << endl;
 		if (InAction2 == true)
 		{
-			cout << "ttttttttttttttttttttttttttttttttttttt";
+			//            cout << "ttttttttttttttttttttttttttttttttttttt";
 			InAction2 = false;
 			SC.X_RightHandJoint_length2 = 20 + punchPos;
 			SC.Y_RightHandJoint_length2 = 15 - punchPos;
@@ -237,8 +257,8 @@ void player::punch(bool &InAction1,bool &InAction2)
 		InAction1 = true;
 		SC.X_RightHandJoint_length2 = 20 + punchPos;
 		SC.Y_RightHandJoint_length2 = 15 - punchPos;
-		SC.X_RightHandJoint_length = 20 + punchPos/3;
-		SC.Y_RightHandJoint_length = 15 - punchPos/3;
+		SC.X_RightHandJoint_length = 20 + punchPos / 3;
+		SC.Y_RightHandJoint_length = 15 - punchPos / 3;
 		SC.X_LeftHandJoint_length2 = 20 - punchPos;
 		SC.Y_LeftHandJoint_length2 = 15 + punchPos;
 		punchPos += 3;
@@ -246,7 +266,7 @@ void player::punch(bool &InAction1,bool &InAction2)
 		{
 			punchPos = 0;
 			InAction1 = false;
-			cout << "action1=" << InAction1 << endl;
+			//            cout << "action1=" << InAction1 << endl;
 			SC.X_RightHandJoint_length = 20;
 			SC.Y_RightHandJoint_length = 15;
 			SC.X_RightHandJoint_length2 = 20;
@@ -260,7 +280,7 @@ void player::punch(bool &InAction1,bool &InAction2)
 	{
 		if (InAction1 == true)
 		{
-			cout << "yyyyyyyyyyyyyyyyyyyyyyyyy" << endl;
+			//            cout << "yyyyyyyyyyyyyyyyyyyyyyyyy" << endl;
 			InAction1 = false;
 			SC.X_RightHandJoint_length = 20;
 			SC.Y_RightHandJoint_length = 15;
@@ -272,8 +292,8 @@ void player::punch(bool &InAction1,bool &InAction2)
 		InAction2 = true;
 		SC.X_LeftHandJoint_length2 = 20 + punchPos;
 		SC.Y_LeftHandJoint_length2 = 15 - punchPos;
-		SC.X_LeftHandJoint_length = 20 + punchPos/3;
-		SC.Y_LeftHandJoint_length = 15 - punchPos/3;
+		SC.X_LeftHandJoint_length = 20 + punchPos / 3;
+		SC.Y_LeftHandJoint_length = 15 - punchPos / 3;
 		SC.X_RightHandJoint_length2 = 20 - punchPos;
 		SC.Y_RightHandJoint_length2 = 15 + punchPos;
 		punchPos += 3;
@@ -313,18 +333,18 @@ void player::stab() {
 	}
 }
 // Get id die
-bool player::getIfDie(){
-    return is_die;
+bool player::getIfDie() {
+	return is_die;
 }
 
 // Decide if hit by someone
 void player::ifHit(int key, int s)
 {
-    // key: hit type
-    // type_hit: 0 for punch, 1 for kick
-    
-    // Main Player
-    if (num_player == 2){
+	// key: hit type
+	// type_hit: 0 for punch, 1 for kick
+
+	// Main Player
+	if (num_player == 2) {
 		if (key == FSKEY_Z && s == 1)
 			type_hit = 0;
 
@@ -332,48 +352,59 @@ void player::ifHit(int key, int s)
 			type_hit = 1;
 
 		/*if (key == FSKEY_C && state == 2)
-			type_hit = 2;*/
+		 type_hit = 2;*/
 
 		if (key == FSKEY_Z && s == 3)
 			type_hit = 3;
-    }
-    
-    // Enemy 1
-	else if (num_player == 1){
-		if (key == FSKEY_B && s == 1)
-			type_hit = 0;
+	}
 
-		if (key == FSKEY_N)
-			type_hit = 1;
+	// Enemy 1
+	else if (num_player == 1) {
+		if ((key == FSKEY_B || key == 66) && s == 1)
+			type_hit = 4;
+
+		if (key == FSKEY_N || key == 78)
+			type_hit = 5;
 
 		/*if (key == FSKEY_M && state == 2)
-			type_hit = 2;*/
+		 type_hit = 2;*/
 
-		if (key == FSKEY_B && s == 3)
-			type_hit = 3;
+		if ((key == FSKEY_B || key == 66) && s == 3)
+			type_hit = 6;
 	}
 }
-
 
 // Check the hit points left in time
 void player::handleLife()
 {
 	switch (type_hit)
 	{
-	case(0) :
+	case(0):
 		lifeValue -= 1;
 		type_hit = -1;
 		break;
-	case(1) :
+	case(1):
 		lifeValue -= 2;
 		type_hit = -1;
 		break;
-	case(2) :
+	case(2):
 		lifeValue -= 5;
 		type_hit = -1;
 		break;
-	case(3) :
+	case(3):
 		lifeValue -= 3;
+		type_hit = -1;
+		break;
+	case(4):
+		lifeValue -= .4;
+		type_hit = -1;
+		break;
+	case(5):
+		lifeValue -= .8;
+		type_hit = -1;
+		break;
+	case(6):
+		lifeValue -= 1;
 		type_hit = -1;
 		break;
 	}
@@ -387,131 +418,138 @@ void player::handleLife()
 // Draw the life bar
 void player::drawLife()
 {
-    int hp_percent = (100*lifeValue) / life_tot ;        // the percent of HP health remaining
+	int hp_percent = (100 * lifeValue) / life_tot;        // the percent of HP health remaining
 	//cout << life_tot << endl;
 	//cout << hp_percent << endl;
-    double long_side = lifeValue * SIDEMAG;             // Long Side of Life Bar
-    double short_side = 25;
-    
-    double long_side_1 = frame * SIDEMAG;
-    double short_side_1 = 25;
-    
-    //switch (num_player){
-    //    case(1):
-    //        short_side = short_side_1 = 30;             // Short Side of Life Bar
-    //        break;
-    //    case(2):
-    //        short_side = short_side_1 = 20;             // Short Side of Life Bar
-    //        break;
-    //}
-    
-    // Vertices for lifebar
-    int rbar, gbar, bbar;        // RGB values for the hp bar
-    if (hp_percent <= 100 && hp_percent > 70) {
-        rbar = 0;
-        gbar = 204;
-        bbar = 0;
-    }
-    else if (hp_percent <= 70 && hp_percent > 25) {
-        rbar = 255;
-        gbar = 165;
-        bbar = 0;
-    }
-    else if (hp_percent <= 25 && hp_percent > 0) {
-        rbar = 204;
-        gbar = 0;
-        bbar = 0;
-    }
-	else if (hp_percent == 0) {
+	double long_side = lifeValue * SIDEMAG;             // Long Side of Life Bar
+	double short_side = 25;
+
+	double long_side_1 = frame * SIDEMAG;
+	double short_side_1 = 25;
+
+	//switch (num_player){
+	//    case(1):
+	//        short_side = short_side_1 = 30;             // Short Side of Life Bar
+	//        break;
+	//    case(2):
+	//        short_side = short_side_1 = 20;             // Short Side of Life Bar
+	//        break;
+	//}
+
+	// Vertices for lifebar
+	int rbar, gbar, bbar;        // RGB values for the hp bar
+	if (hp_percent <= 100 && hp_percent > 70) {
+		rbar = 0;
+		gbar = 204;
+		bbar = 0;
+	}
+	else if (hp_percent <= 70 && hp_percent > 25) {
+		rbar = 255;
+		gbar = 165;
+		bbar = 0;
+	}
+	else if (hp_percent <= 25 && hp_percent > 0) {
+		rbar = 204;
+		gbar = 0;
+		bbar = 0;
+	}
+	else {
 		rbar = 0;
 		gbar = 0;
 		bbar = 0;
 	}
-    
-    glColor3ub(rbar, gbar, bbar);                            // Yellow as default
-    glBegin(GL_QUADS);                                  // Rectangular Life Bar
-    
-    glVertex2i(lifeX, lifeY);
-    glVertex2i(lifeX + long_side, lifeY);
-    glVertex2i(lifeX + long_side, lifeY + short_side);
-    glVertex2i(lifeX, lifeY + short_side);
-    
-    glEnd();
-    
+
+	glColor3ub(rbar, gbar, bbar);                            // Yellow as default
+	glBegin(GL_QUADS);                                  // Rectangular Life Bar
+
+	glVertex2i(lifeX, lifeY);
+	glVertex2i(lifeX + long_side, lifeY);
+	glVertex2i(lifeX + long_side, lifeY + short_side);
+	glVertex2i(lifeX, lifeY + short_side);
+
+	glEnd();
+
 	glLineWidth(5);
-    glColor3ub(0, 0, 0);
-    glBegin(GL_LINE_LOOP);                                // Rectangular Life Bar
-    
-    // Outline for lifebar
-    glVertex2i(lifeX, lifeY);
-    glVertex2i(lifeX + long_side_1, lifeY);
-    glVertex2i(lifeX + long_side_1, lifeY + short_side_1);
-    glVertex2i(lifeX, lifeY + short_side_1);
-    glEnd();
-    
-    // HP module
-    
-    string life_digit = to_string(hp_percent);           // display HP value
-    const char *life_cstr = life_digit.c_str();          // the life HP of player
-    
-    glColor3ub(32,32,32);
-    glRasterPos2i(lifeX, lifeY-5);
-    YsGlDrawFontBitmap12x16("Health:");
-    glRasterPos2i(lifeX+1, lifeY - 5);
-    YsGlDrawFontBitmap12x16("Health:");
-    
-    glColor3ub(204, 0, 0);
-    glRasterPos2i(lifeX + 88, lifeY-5);
-    YsGlDrawFontBitmap12x16(life_cstr);
-    glRasterPos2i(lifeX + 89, lifeY - 5);
-    YsGlDrawFontBitmap12x16(life_cstr);
-    
+	glColor3ub(0, 0, 0);
+	glBegin(GL_LINE_LOOP);                                // Rectangular Life Bar
+
+	// Outline for lifebar
+	glVertex2i(lifeX, lifeY);
+	glVertex2i(lifeX + long_side_1, lifeY);
+	glVertex2i(lifeX + long_side_1, lifeY + short_side_1);
+	glVertex2i(lifeX, lifeY + short_side_1);
+	glEnd();
+
+	// HP module
+
+	string life_digit = to_string(hp_percent);           // display HP value
+	const char *life_cstr = life_digit.c_str();          // the life HP of player
+
+	glColor3ub(32, 32, 32);
+	glRasterPos2i(lifeX, lifeY - 5);
+	YsGlDrawFontBitmap12x16("Health:");
+	glRasterPos2i(lifeX + 1, lifeY - 5);
+	YsGlDrawFontBitmap12x16("Health:");
+
+	glColor3ub(204, 0, 0);
+	glRasterPos2i(lifeX + 88, lifeY - 5);
+	YsGlDrawFontBitmap12x16(life_cstr);
+	glRasterPos2i(lifeX + 89, lifeY - 5);
+	YsGlDrawFontBitmap12x16(life_cstr);
 }
 
 // Check if the player dies
 void player::checkIfDie(bool &terminate, string playerName)
 {
-    if (lifeValue <= 0){
-		glColor3ub(1, 1, 0);
-		glRasterPos2i(200, 300);
-		if (playerName == "left")
-		{
-			YsGlDrawFontBitmap20x32("Player Right Wins!!!!");
+	if (lifeValue <= 0) {
+		//        glColor3ub(1, 1, 0);
+		//        glRasterPos2i(200, 300);
+		//        if (playerName == "left")
+		//        {
+		//            YsGlDrawFontBitmap20x32("Player Right Wins!!!!");
+		//            FsSwapBuffers();
+		//            FsSleep(2000);
+		//        }
+		//        else
+		//        {
+		//            YsGlDrawFontBitmap20x32("Player Left Wins!!!!");
+		//            FsSwapBuffers();
+		//            FsSleep(2000);
+		//        }
+		//        FsSleep(1000);
+		//        terminate = true;
+		if (is_main == true) {
+			glColor3ub(1, 1, 0);
+			glRasterPos2i(340, 300);
+			YsGlDrawFontBitmap20x32("Game Over!");
 			FsSwapBuffers();
 			FsSleep(2000);
+			terminate = true;
 		}
-		else
-		{
-			YsGlDrawFontBitmap20x32("Player Left Wins!!!!");
-			FsSwapBuffers();
-			FsSleep(2000);
-		}
-		FsSleep(1000);
-		terminate = true;
-        is_die = true;
-    } else {
-        is_die = false;
-    }
-	
+		is_die = true;
+	}
+	else {
+		is_die = false;
+	}
 }
 
 void player::createBlood(Coordinate origin)
 {
 	glLineWidth(3);
-	glColor3f(255, 0, 0);
+	glColor3ub(255, 0, 0);
 	glBegin(GL_LINES);
-	glVertex2i(origin.x + 10+ BloodPos, origin.y-8- BloodPos);
-	glVertex2i(origin.x + 14+ BloodPos, origin.y-12 - BloodPos);
-	glVertex2i(origin.x , origin.y-8- BloodPos);
-	glVertex2i(origin.x , origin.y-12- BloodPos);
-	glVertex2i(origin.x - 10 - BloodPos, origin.y-8- BloodPos);
-	glVertex2i(origin.x - 14 - BloodPos, origin.y-12- BloodPos);
-	glVertex2i(origin.x + 20+ BloodPos, origin.y - 28- BloodPos);
-	glVertex2i(origin.x + 24+ BloodPos, origin.y - 32- BloodPos);
-	glVertex2i(origin.x, origin.y - 28- BloodPos);
-	glVertex2i(origin.x, origin.y - 32- BloodPos);
-	glVertex2i(origin.x - 20- BloodPos, origin.y - 28- BloodPos);
-	glVertex2i(origin.x - 24- BloodPos, origin.y - 32- BloodPos);
+	glVertex2i(origin.x + 10 + BloodPos, origin.y - 8 - BloodPos);
+	glVertex2i(origin.x + 14 + BloodPos, origin.y - 12 - BloodPos);
+	glVertex2i(origin.x, origin.y - 8 - BloodPos);
+	glVertex2i(origin.x, origin.y - 12 - BloodPos);
+	glVertex2i(origin.x - 10 - BloodPos, origin.y - 8 - BloodPos);
+	glVertex2i(origin.x - 14 - BloodPos, origin.y - 12 - BloodPos);
+	glVertex2i(origin.x + 20 + BloodPos, origin.y - 28 - BloodPos);
+	glVertex2i(origin.x + 24 + BloodPos, origin.y - 32 - BloodPos);
+	glVertex2i(origin.x, origin.y - 28 - BloodPos);
+	glVertex2i(origin.x, origin.y - 32 - BloodPos);
+	glVertex2i(origin.x - 20 - BloodPos, origin.y - 28 - BloodPos);
+	glVertex2i(origin.x - 24 - BloodPos, origin.y - 32 - BloodPos);
 	//drawCircle(origin,100, TRUE);
 	glEnd();
 	//glFlush();
@@ -523,30 +561,30 @@ void player::createBlood(Coordinate origin)
 
 void player::Jump(float dt)
 {
-	StickyManOrigin.y = StickyManOrigin.y - 0.5*(9.80)*(dt*dt) - v* dt;
+	StickyManOrigin.y = StickyManOrigin.y - 0.5*(9.80)*(dt*dt) - v * dt;
 	v = v + (-9.80)*dt;
-	InAir = TRUE;
+	InAir = true;
 	if (StickyManOrigin.y >= 450)
 	{
 		StickyManOrigin.y = 450;
-		InAir = FALSE;
+		InAir = false;
 		v = 50;
 	}
 }
 
 void player::showText()
 {
-	glColor3f(256, 0, 0);                            // Yellow as default
+	glColor3ub(256, 0, 0);                            // Yellow as default
 	glBegin(GL_QUADS);                                  // Rectangular Life Bar
 
 	glVertex2i(StickyManOrigin.x - 200, StickyManOrigin.y - 50);
 	glVertex2i(StickyManOrigin.x + 250, StickyManOrigin.y - 50);
-	glVertex2i(StickyManOrigin.x + 250, StickyManOrigin.y-80);
+	glVertex2i(StickyManOrigin.x + 250, StickyManOrigin.y - 80);
 	glVertex2i(StickyManOrigin.x - 200, StickyManOrigin.y - 80);
 
 	glEnd();
 	glColor3ub(1, 1, 0);
-	glRasterPos2i(StickyManOrigin.x-200, StickyManOrigin.y-50);
+	glRasterPos2i(StickyManOrigin.x - 200, StickyManOrigin.y - 50);
 	YsGlDrawFontBitmap20x32("Show me what you've got");
 	FsSwapBuffers();
 	FsSleep(1000);
@@ -554,12 +592,10 @@ void player::showText()
 
 void player::knife_position()
 {
-
-
 	int rad = 20;
 
 	glLineWidth(15);
-	glColor3f(0.0, 0.0, 0);
+	glColor3ub(r, g, b);
 	glBegin(GL_LINES);
 
 	if (judge == 1) {
@@ -588,9 +624,9 @@ void player::knife_position()
 		glVertex2i(StickyManOrigin.x - SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length);
 		glVertex2i(knife.x_lefthand, knife.y_lefthand);
 
-		if (downPressed == FALSE)
+		if (downPressed == false)
 		{
-			if (InAir == FALSE)
+			if (InAir == false)
 				StickyManOrigin.y = 450;
 			SC.lenght = 80;
 
@@ -608,8 +644,8 @@ void player::knife_position()
 		}
 		else
 		{
-			StickyManOrigin.y = 480;
-			SC.lenght = 60;
+			StickyManOrigin.y = 500;
+			SC.lenght = 40;
 
 			//body
 			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
@@ -630,7 +666,7 @@ void player::knife_position()
 		}
 		glEnd();
 
-		glColor3f(0, 0, 0);
+		glColor3ub(r, g, b);
 		drawCircle(StickyManOrigin, rad, true);
 
 		//Draw knife
@@ -655,7 +691,7 @@ void player::knife_position()
 		glVertex2i(knife.x_knife_shield_r, knife.y_knife_shield_r);
 		glEnd();
 	}
-	else if (judge == 0) {
+	else {
 		//right arm setup
 		//double ratio = 1.4;   // need to check integer input;
 		knife.x_righthand_joint = StickyManOrigin.x - SC.X_RightHandJoint_length*0.8 + 1; // store the number in struct
@@ -681,9 +717,9 @@ void player::knife_position()
 		glVertex2i(StickyManOrigin.x + SC.X_LeftHandJoint_length, StickyManOrigin.y + rad + SC.Y_LeftHandJoint_length);
 		glVertex2i(knife.x_lefthand, knife.y_lefthand);
 
-		if (downPressed == FALSE)
+		if (downPressed == false)
 		{
-			if (InAir == FALSE)
+			if (InAir == false)
 				StickyManOrigin.y = 450;
 			SC.lenght = 80;
 
@@ -693,16 +729,16 @@ void player::knife_position()
 
 			//right leg
 			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
-			glVertex2i(StickyManOrigin.x - SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
+			glVertex2i(StickyManOrigin.x + SC.X_RightLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegRight);
 
 			//left leg
 			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
-			glVertex2i(StickyManOrigin.x + SC.X_LeftLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegLeft);
+			glVertex2i(StickyManOrigin.x - SC.X_LeftLeg, StickyManOrigin.y + rad + SC.lenght + SC.Y_LegLeft);
 		}
 		else
 		{
-			StickyManOrigin.y = 480;
-			SC.lenght = 60;
+			StickyManOrigin.y = 500;
+			SC.lenght = 40;
 
 			//body
 			glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
@@ -723,7 +759,7 @@ void player::knife_position()
 		}
 		glEnd();
 
-		glColor3f(0, 0, 0);
+		glColor3ub(r, g, b);
 		drawCircle(StickyManOrigin, rad, true);
 
 		//Draw knife
@@ -753,16 +789,16 @@ void player::knife_position()
 
 void player::laser_position() {
 	int rad = 20;
-	if (downPressed == FALSE)
+	if (downPressed == false)
 	{
 		if (judge == 1)
 		{
 			SC.lenght = 80;
-			if (InAir == FALSE)
+			if (InAir == false)
 				StickyManOrigin.y = 450;
 
 			glLineWidth(15);
-			glColor3f(0.0, 0.0, 0);
+			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
 			//body
@@ -793,7 +829,7 @@ void player::laser_position() {
 
 			glEnd();
 
-			glColor3f(0, 0, 0);
+			glColor3ub(r, g, b);
 			drawCircle(StickyManOrigin, rad, true);
 
 			//draw gun
@@ -831,11 +867,11 @@ void player::laser_position() {
 		else
 		{
 			SC.lenght = 80;
-			if (InAir == FALSE)
+			if (InAir == false)
 				StickyManOrigin.y = 450;
 
 			glLineWidth(15);
-			glColor3f(0.0, 0.0, 0);
+			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
 			//body
@@ -866,7 +902,7 @@ void player::laser_position() {
 
 			glEnd();
 
-			glColor3f(0, 0, 0);
+			glColor3ub(r, g, b);
 			drawCircle(StickyManOrigin, rad, true);
 
 			//draw gun
@@ -911,7 +947,7 @@ void player::laser_position() {
 			StickyManOrigin.y = 500;
 
 			glLineWidth(15);
-			glColor3f(0.0, 0.0, 0);
+			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
 			//body
@@ -946,7 +982,7 @@ void player::laser_position() {
 
 			glEnd();
 
-			glColor3f(0, 0, 0);
+			glColor3ub(r, g, b);
 			drawCircle(StickyManOrigin, rad, true);
 
 			//draw gun
@@ -987,7 +1023,7 @@ void player::laser_position() {
 			StickyManOrigin.y = 500;
 
 			glLineWidth(15);
-			glColor3f(0.0, 0.0, 0);
+			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
 			//body
@@ -1022,7 +1058,7 @@ void player::laser_position() {
 
 			glEnd();
 
-			glColor3f(0, 0, 0);
+			glColor3ub(r, g, b);
 			drawCircle(StickyManOrigin, rad, true);
 
 			//draw gun
@@ -1063,7 +1099,7 @@ void player::laser_position() {
 
 void player::bullet_init()
 {
-	if (!bullet_visible) 
+	if (!bullet_visible)
 	{
 		laser_traj.x = guntip.x;
 		laser_traj.y = guntip.y;
@@ -1073,9 +1109,9 @@ void player::bullet_init()
 }
 
 
-void player::draw_laser() 
+void player::draw_laser()
 {
-	if (bullet_visible) 
+	if (bullet_visible)
 	{
 		glLineWidth(40);
 		glColor3ub(255, 0, 255);
@@ -1086,7 +1122,7 @@ void player::draw_laser()
 	}
 }
 
-void player::laser_move() 
+void player::laser_move()
 {
 	if (bullet_visible) {
 		if (judge_gun == 1) {
@@ -1101,16 +1137,16 @@ void player::laser_move()
 			bullet_visible = false;
 	}
 	/*void player::laser_move() {
-		for (int i = 0; i < 6; i++) {
-			if (bullets[i].isvisible == true) {
-				if (bullets[i].shoot_right == 1) {
-					bullets[i].x += 15;
-				}
-				else if (bullets[i].shoot_right == 0) {
-					bullets[i].x -= 15;
-				}
-			}
-		}*/
+	 for (int i = 0; i < 6; i++) {
+	 if (bullets[i].isvisible == true) {
+	 if (bullets[i].shoot_right == 1) {
+	 bullets[i].x += 15;
+	 }
+	 else if (bullets[i].shoot_right == 0) {
+	 bullets[i].x -= 15;
+	 }
+	 }
+	 }*/
 }
 
 
@@ -1155,9 +1191,22 @@ void player::bullet_hit(int key) {
 	}
 
 
-	
+
 }
 
 int player::raisearm_x() {
 	return raisearm.x;
+}
+
+void player::checkIfWin(bool &terminate, int num) {
+	if (num == 5 && lifeValue > 0) {
+		if (is_main == true) {
+			glColor3ub(1, 1, 0);
+			glRasterPos2i(380, 300);
+			YsGlDrawFontBitmap20x32("Win!");
+			FsSwapBuffers();
+			FsSleep(2000);
+			terminate = true;
+		}
+	}
 }

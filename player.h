@@ -56,27 +56,26 @@ struct knifeCoordinates {
 	int y_righthand;
 };
 
-
-
 class player
 {
 private:
 	knifeCoordinates knife;
 	Coordinate StickyManOrigin;
 	StickyManCoordinates SC;
-    
-    /* Life Variables */
-    static const int SIDEMAG = 3; 
-    
-    int life_tot;
-    
-    int lifeValue;                  // Original Hit Points that the Player has
-    int num_player = 1;             // # of the Player
-    double lifeX, lifeY;            // Position of Life Bar on the Window
-    double frame;
-    bool is_main;                   // Whether it is the main player
-    
-    bool is_die = false;            // Whether the player die
+
+	/* Life Variables */
+	static const int SIDEMAG = 3;
+
+	int life_tot;
+	float r, g, b;
+
+	double lifeValue;                  // Original Hit Points that the Player has
+	int num_player = 1;             // # of the Player
+	double lifeX, lifeY;            // Position of Life Bar on the Window
+	double frame;
+	bool is_main;                   // Whether it is the main player
+
+	bool is_die = false;            // Whether the player die
 
 
 	Coordinate laser_traj;
@@ -86,13 +85,15 @@ private:
 	Coordinate raisearm;
 
 public:
+	bool InAction1 = false, InAction2 = false;
+	bool InAction1_kick = false, InAction2_kick = false;
 	bool bullet_visible = false;
 	int judge = 0;
 	int judge_gun;
-	int state;							// State of the Player
-	
-	bool InAir = FALSE;
-	bool downPressed = FALSE;
+	int state;                            // State of the Player
+
+	bool InAir = false;
+	bool downPressed = false;
 	int type_hit = -1;
 
 	int punchPos = 0;
@@ -102,20 +103,20 @@ public:
 
 	int BloodPos = 0;
 
-    player(int x, int y, int lv, float lx, float ly, int num, bool main);
+	player(int x, int y, double lv, double lx, double ly, int num, bool main, float r_in, float g_in, float b_in);
 	void draw();
 	void moveLeft(int speed);
-	void moveRight(int speed);							// change the origin coordinates, store the new leg coordinates/new config
+	void moveRight(int speed);                            // change the origin coordinates, store the new leg coordinates/new config
 
-	void punch(bool &InAction1,bool &InAction2);								// store the new coordinates for the arm/new config
-	void kick();								// store the new coordinates for the leg/new config
-    
-    bool getIfDie();						// Deice if hit
+	void punch();                                // store the new coordinates for the arm/new config
+	void kick();                                // store the new coordinates for the leg/new config
+
+	bool getIfDie();                        // Deice if hit
 	void ifHit(int key, int state);
-    /* Life Methods */
-    void drawLife();                            // Draw the life bar
-    void handleLife();							// Check the hit points left in time
-    void checkIfDie(bool &terminate, string playerName);           // Check if the player dies
+	/* Life Methods */
+	void drawLife();                            // Draw the life bar
+	void handleLife();                            // Check the hit points left in time
+	void checkIfDie(bool &terminate, string playerName);           // Check if the player dies
 	Coordinate get_origin() { return StickyManOrigin; }
 	Coordinate get_origin_laser() { return laser_traj; }
 	void Jump(float dt);
@@ -128,10 +129,24 @@ public:
 	void draw_laser();
 	void laser_move();
 	void bullet_init();
-	bool bulletvisible();						// return bullet visible status
-	void bullet_hit(int key);							// return whether bullet hit
-	int raisearm_x();							// arm position raised
+	bool bulletvisible();                        // return bullet visible status
+	void bullet_hit(int key);                            // return whether bullet hit
+	int raisearm_x();                            // arm position raised
 	void stab();
 
 	void createBlood(Coordinate origin);
+
+	void checkIfWin(bool &terminate, int num);
+};
+
+class enemy {
+private:
+
+protected:
+
+public:
+	player* e1;
+	enemy() { e1 = new player(600, 450, 10, 600.0, 50.0, 2, false, 64.0, 64.0, 128.0); }
+
+	bool is_die = false;                        // Decide if hit
 };
