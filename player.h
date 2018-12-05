@@ -119,6 +119,15 @@ public:
     void checkIfDie(bool &terminate, string playerName);           // Check if the player dies
 	Coordinate get_origin() { return StickyManOrigin; }
 	Coordinate get_origin_laser() { return laser_traj; }
+	
+	
+	void set_origin(int a, int b) {             // Going DOWN Yufan
+		StickyManOrigin.x = a; StickyManOrigin.y = b;
+	}
+	void set_ystate(int a) {
+		yState = a;                             // 
+	}
+
 	void Jump(float dt);
 	void showText();
 
