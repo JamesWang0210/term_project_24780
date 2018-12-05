@@ -533,16 +533,16 @@ void player::createBlood(Coordinate origin)
 void player::getYstate()
 {
 	if (StickyManOrigin.x >= 320 + 60 * yState && StickyManOrigin.x + 30
-		<= 320 + 60 * (yState + 1)) {//changed yState + 1 to + 2
-		if (StickyManOrigin.y <= 405 - 45 * yState && yState < 7) {
+		<= 320 + 60 * (yState + 2)) {//changed yState + 1 to + 2
+		if (StickyManOrigin.y <= 405 - 45 * yState && StickyManOrigin.y > 405 - 45 * (yState + 1) && yState < 7) {
 			change1State = true;
 		}
 	}
 	else
 		change1State = false;
 	if (StickyManOrigin.x >= 320 + 60 * (yState + 1) &&
-		StickyManOrigin.x + 30 <= 320 + 60 * (yState + 2)) {
-		if (StickyManOrigin.y <= 405 - 45 * (yState + 1) && yState < 6) {
+		StickyManOrigin.x + 30 <= 320 + 60 * (yState + 3)) {
+		if (StickyManOrigin.y <= 405 - 45 * (yState + 1) && StickyManOrigin.y > 405 - 45 * (yState + 2) && yState < 6) {
 			change2States = true;
 		}
 	}
