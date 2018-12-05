@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <math.h>
+#include "yspng.h"
 #include "fssimplewindow.h"
 #include "ysglfontdata.h"
 #include "yssimplesound.h"
@@ -19,6 +20,7 @@ struct Coordinate
 
 struct StickyManCoordinates
 {
+	int groundOriginY;
 	int lenght;
 	int X_RightHandJoint_length;
 	int Y_RightHandJoint_length;
@@ -67,6 +69,7 @@ private:
 	static const int SIDEMAG = 3;
 
 	int life_tot;
+	int yState;
 	float r, g, b;
 
 	double lifeValue;                  // Original Hit Points that the Player has
@@ -76,13 +79,15 @@ private:
 	bool is_main;                   // Whether it is the main player
 
 	bool is_die = false;            // Whether the player die
-
+	bool change1State;
+	bool change2States;
 
 	Coordinate laser_traj;
 	//bool bullet_visible = false;
 	bool bullethit = false; // determine whether hit by a character
 	Coordinate guntip;
 	Coordinate raisearm;
+	bool isPve;
 
 public:
 	bool InAction1 = false, InAction2 = false;
@@ -103,7 +108,7 @@ public:
 
 	int BloodPos = 0;
 
-	player(int x, int y, double lv, double lx, double ly, int num, bool main, float r_in, float g_in, float b_in);
+	player(int x, int y, double lv, double lx, double ly, int num, bool main, float r_in, float g_in, float b_in, bool pve);
 	void draw();
 	void moveLeft(int speed);
 	void moveRight(int speed);                            // change the origin coordinates, store the new leg coordinates/new config
@@ -112,13 +117,21 @@ public:
 	void kick();                                // store the new coordinates for the leg/new config
 
 	bool getIfDie();                        // Deice if hit
-	void ifHit(int key, int state);
+	void ifHit(int key, int state, bool press);
 	/* Life Methods */
 	void drawLife();                            // Draw the life bar
 	void handleLife();                            // Check the hit points left in time
 	void checkIfDie(bool &terminate, string playerName);           // Check if the player dies
 	Coordinate get_origin() { return StickyManOrigin; }
 	Coordinate get_origin_laser() { return laser_traj; }
+
+	void set_origin(int a, int b) {             // Going DOWN Yufan
+		StickyManOrigin.x = a; StickyManOrigin.y = b;
+	}
+	void set_ystate(int a) {
+		yState = a;                             // 
+	}
+
 	void Jump(float dt);
 	void showText();
 
@@ -135,6 +148,7 @@ public:
 	void stab();
 
 	void createBlood(Coordinate origin);
+	void getYstate();
 
 	void checkIfWin(bool &terminate, int num);
 };
@@ -146,7 +160,7 @@ protected:
 
 public:
 	player* e1;
-	enemy() { e1 = new player(600, 450, 10, 600.0, 50.0, 2, false, 64.0, 64.0, 128.0); }
+	enemy() { e1 = new player(600, 450, 10, 600.0, 50.0, 2, false, 64.0, 64.0, 128.0, true); }
 
 	bool is_die = false;                        // Decide if hit
 };

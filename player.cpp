@@ -1,9 +1,11 @@
 #include "player.h"
 
-player::player(int x, int y, double lv, double lx, double ly, int num, bool main, float r_in, float g_in, float b_in)
+player::player(int x, int y, double lv, double lx, double ly, int num, bool main, float r_in, float g_in, float b_in, bool pve)
 {
+	isPve = pve;
+	SC.groundOriginY = y;
 	StickyManOrigin.x = x;
-	StickyManOrigin.y = y;
+	StickyManOrigin.y = SC.groundOriginY;
 	SC.lenght = 80;
 	SC.X_RightHandJoint_length = 20;
 	SC.Y_RightHandJoint_length = 15;
@@ -30,6 +32,10 @@ player::player(int x, int y, double lv, double lx, double ly, int num, bool main
 	is_main = main;
 
 	state = 1;
+	yState = 0;
+
+	change1State = false;
+	change2States = false;
 
 	r = r_in;
 	g = g_in;
@@ -59,12 +65,16 @@ void drawCircle(Coordinate origin, int rad, bool fill)
 void player::draw()
 {
 	int rad = 20;
+	glLineWidth(10);
 	if (downPressed == false)
 	{
 		SC.lenght = 80;
-		if (InAir == false)
-			StickyManOrigin.y = 450;
-		glLineWidth(10);
+		if (InAir == false) {
+			if (isPve)
+				StickyManOrigin.y = 450;
+			else
+				StickyManOrigin.y = 450 - yState * 45; //changed this for stairs
+		}
 		glColor3ub(r, g, b);
 		glBegin(GL_LINES);
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
@@ -95,11 +105,13 @@ void player::draw()
 	else
 	{
 		float newYOrigin;
-		glLineWidth(10);
 		glColor3ub(r, g, b);
 		SC.lenght = 40;
 
-		StickyManOrigin.y = 500;
+		if (isPve)
+			StickyManOrigin.y = 500;
+		else
+			StickyManOrigin.y = 500 - yState * 45; //changed this for stairs
 		glBegin(GL_LINES);
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad);
 		glVertex2i(StickyManOrigin.x, StickyManOrigin.y + rad + SC.lenght);
@@ -137,6 +149,10 @@ void player::draw()
 
 void player::moveLeft(int speed)
 {
+	if (isPve == false) {
+		if (yState > 0 && yState < 7 && StickyManOrigin.x + 30 <= 320 + 60 * (yState - 1))
+			yState -= 1;
+	}
 	StickyManOrigin.x -= speed;
 	if (StickyManOrigin.x < 30)
 		StickyManOrigin.x = 30;
@@ -154,6 +170,11 @@ void player::moveLeft(int speed)
 
 void player::moveRight(int speed)
 {
+	if (isPve == false) {
+		if (yState > 0 && yState < 7 && StickyManOrigin.x + 30 >= 320 + 60 * yState &&
+			StickyManOrigin.y > 405 - 45 * yState)
+			StickyManOrigin.x = 290 + 60 * yState;
+	}
 	StickyManOrigin.x += speed;
 	if (StickyManOrigin.x > 770)
 		StickyManOrigin.x = 770;
@@ -338,7 +359,7 @@ bool player::getIfDie() {
 }
 
 // Decide if hit by someone
-void player::ifHit(int key, int s)
+void player::ifHit(int key, int s, bool press)
 {
 	// key: hit type
 	// type_hit: 0 for punch, 1 for kick
@@ -348,7 +369,7 @@ void player::ifHit(int key, int s)
 		if (key == FSKEY_Z && s == 1)
 			type_hit = 0;
 
-		if (key == FSKEY_X)
+		if (key == FSKEY_X && press == false)
 			type_hit = 1;
 
 		/*if (key == FSKEY_C && state == 2)
@@ -482,7 +503,7 @@ void player::drawLife()
 
 	// HP module
 
-	string life_digit = to_string(hp_percent);           // display HP value
+	string life_digit = to_string(int(lifeValue));           // display HP value
 	const char *life_cstr = life_digit.c_str();          // the life HP of player
 
 	glColor3ub(32, 32, 32);
@@ -559,16 +580,63 @@ void player::createBlood(Coordinate origin)
 
 }
 
+void player::getYstate()
+{
+	if (StickyManOrigin.x >= 320 + 60 * yState && StickyManOrigin.x + 30
+		<= 320 + 60 * (yState + 2)) {//changed yState + 1 to + 2
+		if (StickyManOrigin.y <= 405 - 45 * yState && StickyManOrigin.y > 405 - 45 * (yState + 1) && yState < 7) {
+			change1State = true;
+		}
+	}
+	else
+		change1State = false;
+	if (StickyManOrigin.x >= 320 + 60 * (yState + 1) &&
+		StickyManOrigin.x + 30 <= 320 + 60 * (yState + 3)) {
+		if (StickyManOrigin.y <= 405 - 45 * (yState + 1) && StickyManOrigin.y > 405 - 45 * (yState + 2) && yState < 6) {
+			change2States = true;
+		}
+	}
+	else
+		change2States = false;
+}
+
 void player::Jump(float dt)
 {
 	StickyManOrigin.y = StickyManOrigin.y - 0.5*(9.80)*(dt*dt) - v * dt;
 	v = v + (-9.80)*dt;
-	InAir = true;
-	if (StickyManOrigin.y >= 450)
-	{
-		StickyManOrigin.y = 450;
-		InAir = false;
-		v = 50;
+	InAir = TRUE;
+	if (isPve == false) {
+		getYstate();
+		if (v <= 0 && change1State == true && StickyManOrigin.y >= 405 - 45 * yState) {
+			StickyManOrigin.y = 450 - 45 * yState;
+			yState += 1;
+			change1State = false;
+			InAir = FALSE;
+			v = 50;
+		}
+		else if (v <= 0 && change2States == true && StickyManOrigin.y >= 405 - 45 * (yState + 1)) {
+			StickyManOrigin.y = 450 - 45 * (yState + 1);
+			yState += 2;
+			change2States = false;
+			InAir = FALSE;
+			v = 50;
+		}
+		else
+			if (StickyManOrigin.y >= 450 - 45 * yState) {
+				StickyManOrigin.y = 450 - 45 * yState;
+				InAir = FALSE;
+				v = 50;
+			}
+		if (yState > 0 && yState < 6 && StickyManOrigin.x + 30 >= 320 + 60 * yState &&
+			StickyManOrigin.y > 405 - 45 * yState)
+			StickyManOrigin.x = 290 + 60 * yState;
+	}
+	else {
+		if (StickyManOrigin.y >= 450) {
+			StickyManOrigin.y = 450;
+			InAir = FALSE;
+			v = 50;
+		}
 	}
 }
 
@@ -594,7 +662,7 @@ void player::knife_position()
 {
 	int rad = 20;
 
-	glLineWidth(15);
+	glLineWidth(10);
 	glColor3ub(r, g, b);
 	glBegin(GL_LINES);
 
@@ -626,8 +694,12 @@ void player::knife_position()
 
 		if (downPressed == false)
 		{
-			if (InAir == false)
-				StickyManOrigin.y = 450;
+			if (InAir == false) {
+				if (isPve == false)
+					StickyManOrigin.y = 450 - yState * 45; //changed this for stairs
+				else
+					StickyManOrigin.y = 450;
+			}
 			SC.lenght = 80;
 
 			//body
@@ -644,7 +716,10 @@ void player::knife_position()
 		}
 		else
 		{
-			StickyManOrigin.y = 500;
+			if (isPve == false)
+				StickyManOrigin.y = 480 - yState * 45; //changed this for stairs
+			else
+				StickyManOrigin.y = 480;
 			SC.lenght = 40;
 
 			//body
@@ -719,8 +794,12 @@ void player::knife_position()
 
 		if (downPressed == false)
 		{
-			if (InAir == false)
-				StickyManOrigin.y = 450;
+			if (InAir == false) {
+				if (isPve == false)
+					StickyManOrigin.y = 450 - yState * 45; //changed this for stairs
+				else
+					StickyManOrigin.y = 450;
+			}
 			SC.lenght = 80;
 
 			//body
@@ -737,7 +816,10 @@ void player::knife_position()
 		}
 		else
 		{
-			StickyManOrigin.y = 500;
+			if (isPve == false)
+				StickyManOrigin.y = 500 - yState * 45; //changed this for stairs
+			else
+				StickyManOrigin.y = 500;
 			SC.lenght = 40;
 
 			//body
@@ -794,10 +876,14 @@ void player::laser_position() {
 		if (judge == 1)
 		{
 			SC.lenght = 80;
-			if (InAir == false)
-				StickyManOrigin.y = 450;
+			if (InAir == false) {
+				if (isPve == false)
+					StickyManOrigin.y = 450 - yState * 45; //changed this for stairs
+				else
+					StickyManOrigin.y = 450;
+			}
 
-			glLineWidth(15);
+			glLineWidth(10);
 			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
@@ -867,10 +953,14 @@ void player::laser_position() {
 		else
 		{
 			SC.lenght = 80;
-			if (InAir == false)
-				StickyManOrigin.y = 450;
+			if (InAir == false) {
+				if (isPve == false)
+					StickyManOrigin.y = 450 - yState * 45; //changed this for stairs
+				else
+					StickyManOrigin.y = 450;
+			}
 
-			glLineWidth(15);
+			glLineWidth(10);
 			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
@@ -944,9 +1034,12 @@ void player::laser_position() {
 		if (judge == 1)
 		{
 			SC.lenght = 40;
-			StickyManOrigin.y = 500;
+			if (isPve == false)
+				StickyManOrigin.y = 500 - yState * 45; //changed this for stairs
+			else
+				StickyManOrigin.y = 500;
 
-			glLineWidth(15);
+			glLineWidth(10);
 			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
@@ -1020,9 +1113,12 @@ void player::laser_position() {
 		else
 		{
 			SC.lenght = 40;
-			StickyManOrigin.y = 500;
+			if (isPve == false)
+				StickyManOrigin.y = 500 - yState * 45; //changed this for stairs
+			else
+				StickyManOrigin.y = 500;
 
-			glLineWidth(15);
+			glLineWidth(10);
 			glColor3ub(r, g, b);
 			glBegin(GL_LINES);
 
@@ -1172,7 +1268,6 @@ void player::bullet_hit(int key) {
 			{
 				bullet_visible = false;
 				type_hit = 2;
-
 			}
 		}
 	}
@@ -1185,7 +1280,6 @@ void player::bullet_hit(int key) {
 			{
 				bullet_visible = false;
 				type_hit = 2;
-
 			}
 		}
 	}
@@ -1199,7 +1293,7 @@ int player::raisearm_x() {
 }
 
 void player::checkIfWin(bool &terminate, int num) {
-	if (num == 7 && lifeValue > 0) {
+	if (num == 5 && lifeValue > 0) {
 		if (is_main == true) {
 			glColor3ub(1, 1, 0);
 			glRasterPos2i(380, 300);
