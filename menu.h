@@ -23,4 +23,6 @@ public:
 	void showNickname(int loopCount, int pos, bool ready, bool pve, bool secondInput);
 	void saveNickname(int &pos, bool &secondInput, bool pve, bool &terminate);
 	void loadNickname(int &pos, bool &ready, bool &secondInput, bool pve, bool &terminate);
+
+	void instruction();
 };

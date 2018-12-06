@@ -205,3 +205,112 @@ void Menu::loadNickname(int &pos, bool &ready, bool &secondInput, bool pve, bool
 	if (secondInput == false && ready == true)
 		secondInput = true;
 }
+
+void Menu::instruction()
+{
+	int w1 = width / 4;
+	double s1 = 1.8;
+	double i = 0;
+	double m = 16;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap12x16("Instructions: ");
+	i += 2 * m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Player 1: ");
+	i += 2 * m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Move left: A");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Move right: D");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Jump: W");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Crouch: S");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Punch / Knife Hit: Z");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Kick: X");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Shoot: C");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Normal Mode: 1");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Shooting Mode: 2");
+	i += m;
+
+	glRasterPos2i(w1, height / s1 + i);
+	YsGlDrawFontBitmap8x12("Knife Mode: 3");
+	i += m;
+
+	int w2 = width / 1.8;
+	double s2 = s1;
+	i = 2 * m;
+	//m = 0.04;
+
+	/*glRasterPos2i(w2, height / i);
+	YsGlDrawFontBitmap8x12("Instructions: ");
+	i -= 2 * m;*/
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Player 2: ");
+	i += 2 * m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Move left: J");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Move right: L");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Jump: I");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Crouch: K");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Punch / Knife Hit: B");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Kick: N");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Shoot: M");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Normal Mode: 7");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Shooting Mode: 8");
+	i += m;
+
+	glRasterPos2i(w2, height / s2 + i);
+	YsGlDrawFontBitmap8x12("Knife Mode: 9");
+	i += m;
+}
