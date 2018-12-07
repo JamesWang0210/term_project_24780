@@ -16,7 +16,7 @@ The main class for this game is player, which contains the majority of functions
 •	If you choose Multi Player, you can select “New Player” and insert a nickname for player 1. Then choose “New Player” and insert a nickname for Player 2. Press ENTER to start.<br />
 •	If you choose Single Player, you only need to enter your name one time.<br />
 
-## Specfic Keyboard Settings
+## Specfic Keyboard Settings:
   Player 1:<br /> 
   A: move left<br />
   S: crouch<br />
