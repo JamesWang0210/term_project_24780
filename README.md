@@ -1,2 +1,44 @@
-# term_project_24780
-This is the final version for both "Singleplayer" and "Multiplayer" mode.
+# Term Project 24780
+This is the final version for both the Single Player and the Multi Player mode.
+
+## General Instruction: 
+We create a game called StickyMan, which allow the users to interact with the game characters by using keyboard. 
+
+The game has two modes: one is Single Player mode and the other is Multiplayer mode. In Single Player mode, user can fight against the computer controlled characters; user can control one character (player 1) by using certain keys, while the computer controls the enemies (up to 7). In Multiplayer mode, it requires two players to fight against each other; there are two characters with different colors controlled separately by two users using different keys.
+
+## Definition & Declaration: 
+In the game, players can do many actions like move (left/right), jump, crouch, punch, kick and shoot, etc. These actions are written as functions and defined and declared in the source file and a class in header file. 
+
+The main class for this game is player, which contains the majority of functions declaration and variable definition. Also, there is two classes for menu part and environment part respectively, which create the menu and the background of the game.
+
+## Default Keyboard Setup:
+•	Choose Single Player/Multi Player and press ENTER. You can use the UP and DOWN arrows to make your selection.
+•	If you choose Multi Player, you can select “New Player” and insert a nickname for player 1. Then choose “New Player” and insert a nickname for Player 2. Press ENTER to start.
+•	If you choose Single Player, you only need to enter your name one time.
+
+## Specfic Keyboard Settings
+  Player 1: 
+  A: move left
+  S: crouch
+  D: move right
+  W: jump
+  Z: punch in normal state
+  X: kick
+  C: shoot in shooting state
+  2: enter shooting state 
+  1: enter normal state
+  3: enter knife state
+  Z: attack with a knife in knife state
+
+  Player 2: 
+  J: move left
+  K: crouch
+  L: move right
+  I: jump
+  B: punch in normal state
+  N: kick
+  M: shoot in shooting state
+  8: enter shooting state 
+  7: enter normal state
+  9: enter knife state
+  B: attack with a knife in knife state 
