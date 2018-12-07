@@ -12,33 +12,33 @@ In the game, players can do many actions like move (left/right), jump, crouch, p
 The main class for this game is player, which contains the majority of functions declaration and variable definition. Also, there is two classes for menu part and environment part respectively, which create the menu and the background of the game.
 
 ## Default Keyboard Setup:
-•	Choose Single Player/Multi Player and press ENTER. You can use the UP and DOWN arrows to make your selection.\\
-•	If you choose Multi Player, you can select “New Player” and insert a nickname for player 1. Then choose “New Player” and insert a nickname for Player 2. Press ENTER to start.\\
-•	If you choose Single Player, you only need to enter your name one time.
+•	Choose Single Player/Multi Player and press ENTER. You can use the UP and DOWN arrows to make your selection.<br />
+•	If you choose Multi Player, you can select “New Player” and insert a nickname for player 1. Then choose “New Player” and insert a nickname for Player 2. Press ENTER to start.<br />
+•	If you choose Single Player, you only need to enter your name one time.<br />
 
 ## Specfic Keyboard Settings
-  Player 1: 
-  A: move left
-  S: crouch
-  D: move right
-  W: jump
-  Z: punch in normal state
-  X: kick
-  C: shoot in shooting state
-  2: enter shooting state 
-  1: enter normal state
-  3: enter knife state
-  Z: attack with a knife in knife state
+  Player 1:<br /> 
+  A: move left<br />
+  S: crouch<br />
+  D: move right<br />
+  W: jump<br />
+  Z: punch in normal state<br />
+  X: kick<br />
+  C: shoot in shooting state<br />
+  2: enter shooting state<br /> 
+  1: enter normal state<br />
+  3: enter knife state<br />
+  Z: attack with a knife in knife state<br />
 
-  Player 2: 
-  J: move left
-  K: crouch
-  L: move right
-  I: jump
-  B: punch in normal state
-  N: kick
-  M: shoot in shooting state
-  8: enter shooting state 
-  7: enter normal state
-  9: enter knife state
-  B: attack with a knife in knife state 
+  Player 2:<br /> 
+  J: move left<br />
+  K: crouch<br />
+  L: move right<br />
+  I: jump<br />
+  B: punch in normal state<br />
+  N: kick<br />
+  M: shoot in shooting state<br />
+  8: enter shooting state<br /> 
+  7: enter normal state<br />
+  9: enter knife state<br />
+  B: attack with a knife in knife state<br /> 
