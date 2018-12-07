@@ -121,7 +121,7 @@ public:
 	/* Life Methods */
 	void drawLife();                            // Draw the life bar
 	void handleLife();                            // Check the hit points left in time
-	void checkIfDie(bool &terminate, string playerName, bool pve);           // Check if the player dies
+	void checkIfDie(bool &terminate, string playerName, bool pve, string name1, string name2);           // Check if the player dies
 	Coordinate get_origin() { return StickyManOrigin; }
 	Coordinate get_origin_laser() { return laser_traj; }
 
@@ -150,7 +150,7 @@ public:
 	void createBlood(Coordinate origin);
 	void getYstate();
 
-	void checkIfWin(bool &terminate, int num);
+	void checkIfWin(bool &terminate, int num, string name1);
 };
 
 class enemy {

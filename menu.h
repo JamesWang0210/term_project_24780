@@ -21,8 +21,8 @@ public:
 	void flash(int count);
 	void insertLetter(int &pos, char nameLetter);
 	void showNickname(int loopCount, int pos, bool ready, bool pve, bool secondInput);
-	void saveNickname(int &pos, bool &secondInput, bool pve, bool &terminate);
-	void loadNickname(int &pos, bool &ready, bool &secondInput, bool pve, bool &terminate);
+	void saveNickname(int &pos, bool &secondInput, bool pve, bool &terminate, string &name1, string &name2);
+	void loadNickname(int &pos, bool &ready, bool &secondInput, bool pve, bool &terminate, string &name1, string &name2);
 
 	void instruction();
 };

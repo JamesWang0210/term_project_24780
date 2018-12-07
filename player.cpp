@@ -520,7 +520,7 @@ void player::drawLife()
 }
 
 // Check if the player dies
-void player::checkIfDie(bool &terminate, string playerName, bool pve)
+void player::checkIfDie(bool &terminate, string playerName, bool pve, string name1, string name2)
 {
 	if (pve == true) {
 		if (lifeValue <= 0) {
@@ -558,16 +558,18 @@ void player::checkIfDie(bool &terminate, string playerName, bool pve)
 	else {
 		if (lifeValue <= 0) {
 			glColor3ub(1, 1, 0);
-			glRasterPos2i(200, 300);
+			glRasterPos2i(230, 350);
 			if (playerName == "left")
 			{
-			    YsGlDrawFontBitmap20x32("Player Right Wins!!!!");
+				string result1 = name2 + " Wins!!!!";
+			    YsGlDrawFontBitmap20x32(result1.c_str());
 			    FsSwapBuffers();
 			    FsSleep(2000);
 			}
 			else
 			{
-			    YsGlDrawFontBitmap20x32("Player Left Wins!!!!");
+				string result2 = name1 + " Wins!!!!";
+			    YsGlDrawFontBitmap20x32(result2.c_str());
 			    FsSwapBuffers();
 			    FsSleep(2000);
 			}
@@ -663,6 +665,12 @@ void player::Jump(float dt)
 				InAir = FALSE;
 				v = 50;
 			}
+		if (StickyManOrigin.y <= 135) {
+			StickyManOrigin.y = 135;
+			yState = 7;
+			InAir = FALSE;
+			v = 50;
+		}
 		if (yState > 0 && yState < 6 && StickyManOrigin.x + 30 >= 320 + 60 * yState &&
 			StickyManOrigin.y > 405 - 45 * yState)
 			StickyManOrigin.x = 290 + 60 * yState;
@@ -753,9 +761,9 @@ void player::knife_position()
 		else
 		{
 			if (isPve == false)
-				StickyManOrigin.y = 480 - yState * 45; //changed this for stairs
+				StickyManOrigin.y = 500 - yState * 45; //changed this for stairs
 			else
-				StickyManOrigin.y = 480;
+				StickyManOrigin.y = 500;
 			SC.lenght = 40;
 
 			//body
@@ -1328,12 +1336,13 @@ int player::raisearm_x() {
 	return raisearm.x;
 }
 
-void player::checkIfWin(bool &terminate, int num) {
+void player::checkIfWin(bool &terminate, int num, string name1) {
 	if (num == 5 && lifeValue > 0) {
 		if (is_main == true) {
 			glColor3ub(1, 1, 0);
-			glRasterPos2i(380, 300);
-			YsGlDrawFontBitmap20x32("Win!");
+			glRasterPos2i(230, 350);
+			string result2 = name1 + " Wins!!!!";
+			YsGlDrawFontBitmap20x32(result2.c_str());
 			FsSwapBuffers();
 			FsSleep(2000);
 			terminate = true;
