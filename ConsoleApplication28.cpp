@@ -12,7 +12,7 @@ void drawPNG(int wid, int hei, GLuint texId) {
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glColor4d(1.0, 1.0, 1.0, 1.0);
 
-	// enable texture mapping
+	// enable texture mappingB
 	glEnable(GL_TEXTURE_2D);
 	// bind a texture to OpenGL primitives
 	glBindTexture(GL_TEXTURE_2D, texId);
