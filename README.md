@@ -12,8 +12,8 @@ In the game, players can do many actions like move (left/right), jump, crouch, p
 The main class for this game is player, which contains the majority of functions declaration and variable definition. Also, there is two classes for menu part and environment part respectively, which create the menu and the background of the game.
 
 ## Default Keyboard Setup:
-•	Choose Single Player/Multi Player and press ENTER. You can use the UP and DOWN arrows to make your selection.
-•	If you choose Multi Player, you can select “New Player” and insert a nickname for player 1. Then choose “New Player” and insert a nickname for Player 2. Press ENTER to start.
+•	Choose Single Player/Multi Player and press ENTER. You can use the UP and DOWN arrows to make your selection.\\
+•	If you choose Multi Player, you can select “New Player” and insert a nickname for player 1. Then choose “New Player” and insert a nickname for Player 2. Press ENTER to start.\\
 •	If you choose Single Player, you only need to enter your name one time.
 
 ## Specfic Keyboard Settings
