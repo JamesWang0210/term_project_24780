@@ -119,7 +119,7 @@ void Menu::showNickname(int loopCount, int pos, bool ready, bool pve, bool secon
 	}
 }
 
-void Menu::saveNickname(int &pos, bool &secondInput, bool pve, bool &terminate)
+void Menu::saveNickname(int &pos, bool &secondInput, bool pve, bool &terminate, string &name1, string &name2)
 {
 	ofstream outputFile;
 	outputFile.open("highscores.txt", ios::app); //open the file in append mode
@@ -127,12 +127,24 @@ void Menu::saveNickname(int &pos, bool &secondInput, bool pve, bool &terminate)
 	if (outputFile.is_open()) {
 		for (int i = 0; i < pos; i++)
 			outputFile << nickname[i];
-		outputFile << " " << height << endl; //eventually a score will take height's place
+		outputFile << " " << 0 << endl; //eventually a score will take height's place
 	}
 	else
 		cout << "Unable to open file";
 	outputFile.close();
 	string Name(nickname);
+	if (secondInput) {
+		if (pos == 0)
+			name2 = "Player 2";
+		else
+			name2 = Name.substr(0, pos);
+	}
+	else {
+		if (pos == 0)
+			name1 = "Player 1";
+		else
+			name1 = Name.substr(0, pos);
+	}
 	for (int i = 0; i < 20; i++)
 		nickname[i] = ' ';
 	pos = 0;
@@ -145,7 +157,7 @@ void Menu::saveNickname(int &pos, bool &secondInput, bool pve, bool &terminate)
 		secondInput = true;
 }
 
-void Menu::loadNickname(int &pos, bool &ready, bool &secondInput, bool pve, bool &terminate)
+void Menu::loadNickname(int &pos, bool &ready, bool &secondInput, bool pve, bool &terminate, string &name1, string &name2)
 {
 	ready = false;
 	char name[20];
@@ -173,8 +185,12 @@ void Menu::loadNickname(int &pos, bool &ready, bool &secondInput, bool pve, bool
 				outputFile << nameFromFile;
 				if (nameFromFile == correctName) {
 					nameExists[j] = true;
+					if (secondInput)
+						name2 = correctName;
+					else
+						name1 = correctName;
 					inputFile >> score;
-					outputFile << " " << 1000 << endl; //the current highscore will get the place of 1000 
+					outputFile << " " << 1 << endl; //the current highscore will get the place of 1000 
 				}
 				else {
 					inputFile >> score; //hight will turn to highscore
