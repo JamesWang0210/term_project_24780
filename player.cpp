@@ -665,12 +665,8 @@ void player::Jump(float dt)
 				InAir = FALSE;
 				v = 50;
 			}
-		if (StickyManOrigin.y <= 135) {
-			StickyManOrigin.y = 135;
+		if (StickyManOrigin.y <= 135)
 			yState = 7;
-			InAir = FALSE;
-			v = 50;
-		}
 		if (yState > 0 && yState < 6 && StickyManOrigin.x + 30 >= 320 + 60 * yState &&
 			StickyManOrigin.y > 405 - 45 * yState)
 			StickyManOrigin.x = 290 + 60 * yState;
